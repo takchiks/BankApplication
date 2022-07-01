@@ -1,25 +1,29 @@
 package com.learning.entity;
 
+import com.learning.enums.PaymentType;
+
 import javax.persistence.Entity;
-import javax.xml.crypto.Data;
+import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 public class Transaction {
 
-	private Data date;
+	@Id
+	private int transactionId;
+
+	private Date date;
 	private String reference;
 	private double amount;
 	private int toAcc;
 	private int fromAcc;
 	private String reason;
-	private PaymenType paymentType;
+	private PaymentType paymentType;
 	
-	public enum PaymenType{	
-		DEBIT , CREDIT
-	}
 
-	public Transaction(Data date, String reference, double amount, int toAcc, int fromAcc, String reason,
-			PaymenType paymentType) {
+
+	public Transaction(Date date, String reference, double amount, int toAcc, int fromAcc, String reason,
+			PaymentType paymentType) {
 		super();
 		this.date = date;
 		this.reference = reference;
@@ -35,11 +39,11 @@ public class Transaction {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Data getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(Data date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 
@@ -83,15 +87,19 @@ public class Transaction {
 		this.reason = reason;
 	}
 
-	public PaymenType getPaymentType() {
+	public PaymentType getPaymentType() {
 		return paymentType;
 	}
 
-	public void setPaymentType(PaymenType paymentType) {
+	public void setPaymentType(PaymentType paymentType) {
 		this.paymentType = paymentType;
 	}
-	
-	
-	
-	
+
+	public int getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(int transactionId) {
+		this.transactionId = transactionId;
+	}
 }

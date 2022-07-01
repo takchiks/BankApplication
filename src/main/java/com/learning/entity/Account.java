@@ -1,5 +1,8 @@
 package com.learning.entity;
 
+import com.learning.enums.AccountTyoe;
+import com.learning.enums.Status;
+
 import java.util.Date;
 import java.util.List;
 
@@ -14,13 +17,13 @@ import javax.persistence.OneToMany;
 @Entity
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)    
+//    @GeneratedValue(strategy = GenerationType.AUTO)
 	private long accountNumber;
-	private String accountType;
+	private AccountTyoe accountType;
 	private double accountBalance;
 	private boolean isApproved;
 	private Date dateOfCreation;
-	private String status;
+	private Status status;
 	
 	@OneToMany
 	@JoinTable(name = "acc_Tra_tbl",joinColumns =@JoinColumn(name ="accountNumber"))
@@ -30,7 +33,7 @@ public class Account {
 	@JoinTable(name = "acc_Ben_tbl",joinColumns =@JoinColumn(name ="accountNumber"))
 	private List<Beneficary> beneficary;
 
-	public Account(String accountType, double accountBalance, boolean isApproved, Date dateOfCreation, String status) {
+	public Account(AccountTyoe accountType, double accountBalance, boolean isApproved, Date dateOfCreation, Status status) {
 		super();
 		this.accountType = accountType;
 		this.accountBalance = accountBalance;
@@ -47,11 +50,11 @@ public class Account {
 		this.accountNumber = accountNumber;
 	}
 
-	public String getAccountType() {
+	public AccountTyoe getAccountType() {
 		return accountType;
 	}
 
-	public void setAccountType(String accountType) {
+	public void setAccountType(AccountTyoe accountType) {
 		this.accountType = accountType;
 	}
 
@@ -79,11 +82,11 @@ public class Account {
 		this.dateOfCreation = dateOfCreation;
 	}
 
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 

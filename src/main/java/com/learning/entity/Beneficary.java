@@ -14,7 +14,7 @@ public class Beneficary {
 	private int benId;
 	private long accountNumber;
 	private String accountType;
-	private boolean isApproved;
+	private String isApproved;
 	private Date date;
 	
 	public Beneficary() {
@@ -22,7 +22,7 @@ public class Beneficary {
 		
 	}
 
-	public Beneficary(long accountNumber, String accountType, boolean isApproved, Date date) {
+	public Beneficary(long accountNumber, String accountType, String isApproved, Date date) {
 		super();
 		this.accountNumber = accountNumber;
 		this.accountType = accountType;
@@ -54,11 +54,11 @@ public class Beneficary {
 		this.accountType = accountType;
 	}
 
-	public boolean isApproved() {
+	public String isApproved() {
 		return isApproved;
 	}
 
-	public void setApproved(boolean isApproved) {
+	public void setApproved(String isApproved) {
 		this.isApproved = isApproved;
 	}
 

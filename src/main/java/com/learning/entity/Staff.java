@@ -1,11 +1,13 @@
 package com.learning.entity;
 
+import com.learning.enums.Status;
+
 import javax.persistence.Entity;
 
 @Entity
-public class Staff extends Person {
+public class Staff extends User {
      
-	private String status;
+	private Status status;
 
 	public Staff() {
 		super();
@@ -17,11 +19,11 @@ public class Staff extends Person {
 		
 	}
 
-	public String getStatus() {
+	public Status getStatus() {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(Status status) {
 		this.status = status;
 	}
 	

@@ -10,7 +10,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Customer extends Person {
+public class Customer extends User {
 
 	private long phoneNumber;
 	

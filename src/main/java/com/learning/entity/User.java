@@ -11,30 +11,30 @@ import javax.persistence.InheritanceType;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Person {
+public class User {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private int personId;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int userId;
 	private String fullName;
 	private String userName;
 	private String passWord;
-	public Person(int personId, String fullName, String userName, String passWord) {
+	public User(int userId, String fullName, String userName, String passWord) {
 		super();
-		this.personId = personId;
+		this.userId = userId;
 		this.fullName = fullName;
 		this.userName = userName;
 		this.passWord = passWord;
 	}
-	public Person() {
+	public User() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public int getPersonId() {
-		return personId;
+	public int getuserId() {
+		return userId;
 	}
 	public void setPersonId(int personId) {
-		this.personId = personId;
+		this.userId = userId;
 	}
 	public String getFullName() {
 		return fullName;
@@ -56,7 +56,7 @@ public class Person {
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(fullName, passWord, personId, userName);
+		return Objects.hash(fullName, passWord, userId, userName);
 	}
 	@Override
 	public boolean equals(Object obj) {
@@ -66,9 +66,9 @@ public class Person {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Person other = (Person) obj;
+		User other = (User) obj;
 		return Objects.equals(fullName, other.fullName) && Objects.equals(passWord, other.passWord)
-				&& personId == other.personId && Objects.equals(userName, other.userName);
+				&& userId == other.userId && Objects.equals(userName, other.userName);
 	}
 	
 	
