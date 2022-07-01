@@ -3,13 +3,19 @@ package com.learning.entity;
 import com.learning.enums.PaymentType;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.hibernate.annotations.GeneratorType;
+
 import java.util.Date;
 
 @Entity
 public class Transaction {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int transactionId;
 
 	private Date date;
