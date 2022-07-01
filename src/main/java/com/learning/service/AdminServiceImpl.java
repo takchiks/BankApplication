@@ -1,6 +1,8 @@
 package com.learning.service;
 
 import java.util.List;
+import com.learning.entity.Staff;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.learning.entity.Account;
 import com.learning.entity.Admin;
 import com.learning.repo.AdminRepo;
+import com.learning.repo.StaffRepo;
 
 @Service
  
@@ -15,11 +18,13 @@ public class AdminServiceImpl implements AdminService {
 
 	@Autowired
 	private AdminRepo adminRepo;
+	@Autowired
+	private StaffRepo staffRepo;
    
 	@Override
-	public Admin addAdmin(Admin admin) {
+	public void addAdmin(Admin admin) {
 		
-		return adminRepo.save(admin);
+		adminRepo.save(admin);
 	}
 
 	@Override
@@ -39,5 +44,34 @@ public class AdminServiceImpl implements AdminService {
 		
 		return adminRepo.save(admin);
 	}
+
+	@Override
+	public String deleteAdminById(int personId) {
+		adminRepo.deleteById(personId);
+		return "Admin deleted with id:" + personId;
+	}
+
+	@Override
+	public String validateAdmin(String userName, String password) {
+		
+		return null;
+	}
+	
+	@Override
+	public Staff createStaff(Staff staff) {
+		return staffRepo.save(staff);
+	}
+
+	@Override
+	public List<Staff> getAllStaff() {
+		return staffRepo.findAll();
+	}
+
+	@Override
+	public String setStaffStatus() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }

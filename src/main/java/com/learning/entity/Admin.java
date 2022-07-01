@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 
 @Entity
 public class Admin extends User {
-
+	
 	public Admin() {
 		super();
 		
@@ -14,6 +14,5 @@ public class Admin extends User {
 		super(personId, fullName, userName, passWord);
 		
 	}
-
 	
 }
