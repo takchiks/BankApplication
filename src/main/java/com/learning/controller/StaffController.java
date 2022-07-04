@@ -111,7 +111,7 @@ public class StaffController {
     }
 
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity getCustomerId(@PathVariable("customerID") int customerId) {
+    public ResponseEntity getCustomerId(@PathVariable("customerId") int customerId) {
         Customer customer;
         try {
             customer = customerService.getCustomerById(customerId);
