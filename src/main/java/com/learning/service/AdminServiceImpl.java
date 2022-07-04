@@ -1,19 +1,22 @@
 package com.learning.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import com.learning.entity.Staff;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
+import com.learning.entity.Staff;
+import com.learning.enums.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.learning.entity.Account;
 import com.learning.entity.Admin;
 import com.learning.repo.AdminRepo;
 import com.learning.repo.StaffRepo;
 
 @Service
- 
 public class AdminServiceImpl implements AdminService {
 
 	@Autowired
@@ -34,9 +37,9 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Admin getAdminById(int personId) {
+	public Admin getAdminById(int adminId) {
 		
-		return adminRepo.findById(personId).get();
+		return adminRepo.findById(adminId).get();
 	}
 
 	@Override
@@ -46,15 +49,26 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public String deleteAdminById(int personId) {
-		adminRepo.deleteById(personId);
-		return "Admin deleted with id:" + personId;
+	public String deleteAdminById(int adminId) {
+		adminRepo.deleteById(adminId);
+		return "Admin deleted with id:" + adminId;
 	}
 
 	@Override
-	public String validateAdmin(String userName, String password) {
+	public String validateAdmin(String username, String password) {
+		List<Admin> admins = new ArrayList<Admin>();
+		admins.addAll(adminRepo.findAll());
+		String msg = null;
 		
-		return null;
+		for(Admin admin: admins) {
+			if((admin.getUserName().equals(username))&& (admin.getPassWord().equals(password))) {
+				msg = "JWT Token";
+				break;
+			} else {
+				msg = "User details incorrect";
+			}
+		}
+		return msg;
 	}
 	
 	@Override
@@ -68,9 +82,11 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public String setStaffStatus() {
-		// TODO Auto-generated method stub
-		return null;
+	public String setStaffStatus(int staffId, Status status) {
+		Staff staff = staffRepo.findById(staffId).get();
+		
+		staff.setStatus(status);
+		return "staff saved";
 	}
 
 
