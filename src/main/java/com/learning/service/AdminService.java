@@ -2,9 +2,10 @@ package com.learning.service;
 
 import java.util.List;
 
-import com.learning.entity.Account;
+
 import com.learning.entity.Admin;
 import com.learning.entity.Staff;
+import com.learning.enums.Status;
 
 public interface AdminService {
 	public void addAdmin(Admin admin);
@@ -13,8 +14,7 @@ public interface AdminService {
 	public Admin updateAdmin(Admin admin);
 	public String deleteAdminById(int personId);
 	public Staff createStaff(Staff staff);
-	public String validateAdmin(String userName, String password);
+	public String validateAdmin(String username, String password);
 	public List<Staff> getAllStaff();
-	public String setStaffStatus();	
-	
+	public String setStaffStatus(int personId, Status status);	
 }
