@@ -3,6 +3,7 @@ package com.learning.controller;
 import com.learning.entity.*;
 import com.learning.exception.InsufficentFundsException;
 import com.learning.pojo.AccountRequest;
+import com.learning.pojo.BeneficaryResquest;
 import com.learning.pojo.CustomerRequest;
 import com.learning.pojo.ErrorMapper;
 import com.learning.service.AccountService;
@@ -59,14 +60,19 @@ public class StaffController {
     }
 
     @PutMapping("/beneficiary")
-    public ResponseEntity approveBeneficiary(@RequestBody Beneficary beneficary) {
-        Beneficary beneficary1;
+    public ResponseEntity approveBeneficiary(@RequestBody BeneficaryResquest beneficaryRequest) {
+        Beneficary beneficary;
+        System.out.println(beneficaryRequest);
         try {
-            beneficary1 = beneficiaryService.updateBeneficary(beneficary);
+            beneficary = beneficiaryService.findByAccountNumber(beneficaryRequest.getBeneficiaryAcNo());
+            beneficary.setApproved(beneficaryRequest.getApproved());
+            beneficary.setDate(beneficaryRequest.getBeneficiaryAddedDate());
+
+            beneficary = beneficiaryService.updateBeneficary(beneficary);
         }catch (Exception ex){
-            beneficary1 = null;
+            beneficary = null;
         }
-        return beneficary1 == null ? new ResponseEntity(new ErrorMapper("Sorry beneficiary not approved"), HttpStatus.OK) : new ResponseEntity(beneficary1, HttpStatus.OK);
+        return beneficary == null ? new ResponseEntity(new ErrorMapper("Sorry beneficiary not approved"), HttpStatus.OK) : new ResponseEntity(beneficary, HttpStatus.OK);
 
     }
 
@@ -100,6 +106,7 @@ public class StaffController {
     @PutMapping("/customer")
     public ResponseEntity enableCustomer(@RequestBody CustomerRequest customerRequest) {
         Customer customer;
+        System.out.println(customerRequest);
         try {
             customer = customerService.getCustomerById(customerRequest.getCustomerId());
             customer.setStatus(customerRequest.getStatus());
@@ -107,6 +114,7 @@ public class StaffController {
             customer = null;
         }
 
+        System.out.println(customer);
         return customer == null? new ResponseEntity(new ErrorMapper("Customer status not changed"), HttpStatus.OK) :new ResponseEntity(customerService.updateCustomer(customer), HttpStatus.OK);
     }
 
@@ -126,6 +134,8 @@ public class StaffController {
     @PutMapping("/transfer")
     public ResponseEntity transfer(@RequestBody Transaction transaction) {
         Account fromAccount, toAccount ;
+        //log
+        System.out.println(transaction);
         Transaction transaction1;
         try {
             fromAccount = accountService.getAccountById(transaction.getFromAcc());

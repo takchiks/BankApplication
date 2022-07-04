@@ -12,6 +12,7 @@ public class Beneficary {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int benId;
+	@Column(unique=true)
 	private long accountNumber;
 	@Enumerated(EnumType.STRING)
 	private AccountType accountType;
