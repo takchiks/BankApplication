@@ -10,6 +10,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.learning.entity.User;
+
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
@@ -31,9 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("taku").password(this.passwordEncoder().encode("taku")).roles("Staff");
+    	auth.inMemoryAuthentication().withUser("taku").password(this.passwordEncoder().encode("taku")).roles("Staff");
         auth.inMemoryAuthentication().withUser("taku2").password(this.passwordEncoder().encode("taku")).roles("Admin");
-
     }
 
     @Bean

@@ -57,9 +57,9 @@ public class AdminController {
 	}
 	
 	@PostMapping("/authenticate")
-	public String validateAdmin(@RequestBody UsernamePassword up) {
-		String password = up.getPassword();
-		String username = up.getUsername();
+	public String validateAdmin(@RequestBody UsernamePassword userPass) {
+		String password = userPass.getPassword();
+		String username = userPass.getUsername();
 		return adminService.validateAdmin(username, password);
 	}
 	
@@ -74,9 +74,9 @@ public class AdminController {
 	}
 	
 	@PutMapping("/staff")
-	public String setStaffStatus(@RequestBody StaffStatus ss) {
-		int staffId = ss.getStaffId();
-		Status status = ss.getStatus();
+	public String setStaffStatus(@RequestBody StaffStatus staffStatus) {
+		int staffId = staffStatus.getStaffId();
+		Status status = staffStatus.getStatus();
 		return adminService.setStaffStatus(staffId, status);
 	}
 }
