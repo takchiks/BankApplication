@@ -1,28 +1,23 @@
 package com.learning.entity;
 
-import com.learning.enums.AccountTyoe;
+import com.learning.enums.AccountType;
 import com.learning.enums.Status;
 
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 
 @Entity
 public class Account {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-	private long accountNumber;
-	private AccountTyoe accountType;
+	private int accountNumber;
+	@Enumerated(EnumType.STRING)
+	private AccountType accountType;
 	private double accountBalance;
 	private boolean isApproved;
 	private Date dateOfCreation;
+	@Enumerated(EnumType.STRING)
 	private Status status;
 	
 	@OneToMany
@@ -33,7 +28,7 @@ public class Account {
 	@JoinTable(name = "acc_Ben_tbl",joinColumns =@JoinColumn(name ="accountNumber"))
 	private List<Beneficary> beneficary;
 
-	public Account(AccountTyoe accountType, double accountBalance, boolean isApproved, Date dateOfCreation, Status status) {
+	public Account(AccountType accountType, double accountBalance, boolean isApproved, Date dateOfCreation, Status status) {
 		super();
 		this.accountType = accountType;
 		this.accountBalance = accountBalance;
@@ -42,19 +37,19 @@ public class Account {
 		this.status = status;
 	}
 
-	public long getAccountNumber() {
+	public int getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(long accountNumber) {
+	public void setAccountNumber(int accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 
-	public AccountTyoe getAccountType() {
+	public AccountType getAccountType() {
 		return accountType;
 	}
 
-	public void setAccountType(AccountTyoe accountType) {
+	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
 	}
 

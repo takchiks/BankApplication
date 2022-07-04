@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AccountRepo extends JpaRepository<Account,Long> {
+public interface AccountRepo extends JpaRepository<Account,Integer> {
     public List<Account> findByIsApproved(boolean isApproved);
 }

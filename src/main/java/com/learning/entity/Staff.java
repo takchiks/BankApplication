@@ -8,7 +8,7 @@ import javax.persistence.Enumerated;
 
 @Entity
 public class Staff extends User {
-	
+
     @Enumerated(EnumType.STRING)
 	private Status status;
 
@@ -21,7 +21,7 @@ public class Staff extends User {
 		super(staffId, fullName, userName, passWord);
 		
 	}
-	
+
 
 	public Staff(int staffId, String fullName, String userName, String passWord, Status status) {
 		super(staffId, fullName, userName, passWord);

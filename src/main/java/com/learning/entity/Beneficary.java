@@ -1,19 +1,20 @@
 package com.learning.entity;
 
+import com.learning.enums.AccountType;
+
 import java.util.Date;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+
 @Entity
 public class Beneficary {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int benId;
 	private long accountNumber;
-	private String accountType;
+	@Enumerated(EnumType.STRING)
+	private AccountType accountType;
 	private String isApproved;
 	private Date date;
 	
@@ -22,7 +23,7 @@ public class Beneficary {
 		
 	}
 
-	public Beneficary(long accountNumber, String accountType, String isApproved, Date date) {
+	public Beneficary(long accountNumber, AccountType accountType, String isApproved, Date date) {
 		super();
 		this.accountNumber = accountNumber;
 		this.accountType = accountType;
@@ -46,11 +47,11 @@ public class Beneficary {
 		this.accountNumber = accountNumber;
 	}
 
-	public String getAccountType() {
+	public AccountType getAccountType() {
 		return accountType;
 	}
 
-	public void setAccountType(String accountType) {
+	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
 	}
 

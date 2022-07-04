@@ -1,5 +1,5 @@
 package com.learning.enums;
 
-public enum AccountTyoe {
+public enum AccountType {
     SAVINGS,CURRENT
 }

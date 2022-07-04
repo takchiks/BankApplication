@@ -2,10 +2,7 @@ package com.learning.entity;
 
 import com.learning.enums.PaymentType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import org.hibernate.annotations.GeneratorType;
 
@@ -24,6 +21,7 @@ public class Transaction {
 	private int toAcc;
 	private int fromAcc;
 	private String reason;
+	@Enumerated(EnumType.STRING)
 	private PaymentType paymentType;
 	
 
