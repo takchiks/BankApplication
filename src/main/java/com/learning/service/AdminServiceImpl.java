@@ -10,6 +10,8 @@ import com.learning.entity.Staff;
 import com.learning.enums.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.security.authentication.AccountStatusException;
 import org.springframework.stereotype.Service;
 
 import com.learning.entity.Admin;
@@ -84,8 +86,12 @@ public class AdminServiceImpl implements AdminService {
 	@Override
 	public String setStaffStatus(int staffId, Status status) {
 		Staff staff = staffRepo.findById(staffId).get();
-		
+
 		staff.setStatus(status);
+		/*
+		 * if((status!=Status.DISABLE) || (status!=status.ENABLE)) { throw new
+		 * AccountStatusException("Staff status not changed"); }
+		 */
 		return "staff saved";
 	}
 

@@ -3,15 +3,16 @@ package com.learning.others;
 public class UsernamePassword {
 	private String Username;
 	private String Password;
+	
 	public UsernamePassword() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public UsernamePassword(String username, String password) {
 		super();
 		Username = username;
 		Password = password;
 	}
+	
 	public String getUsername() {
 		return Username;
 	}
