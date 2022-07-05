@@ -13,7 +13,7 @@ public class Beneficary {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int benId;
 	@Column(unique=true)
-	private long accountNumber;
+	private int accountNumber;
 	@Enumerated(EnumType.STRING)
 	private AccountType accountType;
 	private String isApproved;
@@ -23,13 +23,13 @@ public class Beneficary {
 		super();
 		
 	}
-
-	public Beneficary(long accountNumber, AccountType accountType, String isApproved, Date date) {
+	
+	public Beneficary(int accountNumber, AccountType accountType, String isApproved) {
 		super();
 		this.accountNumber = accountNumber;
 		this.accountType = accountType;
 		this.isApproved = isApproved;
-		this.date = date;
+		this.date = new Date();
 	}
 
 	public int getBenId() {
@@ -40,11 +40,11 @@ public class Beneficary {
 		this.benId = benId;
 	}
 
-	public long getAccountNumber() {
+	public int getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(long accountNumber) {
+	public void setAccountNumber(int accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 

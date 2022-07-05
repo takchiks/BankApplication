@@ -25,25 +25,28 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
 
 	@Override
 	public Beneficary addBeneficiary(Beneficary beneficiary) {
-		// TODO Auto-generated method stub
-		return null;
+		return beneficiaryRepo.save(beneficiary);
 	}
 
 	@Override
 	public List<Beneficary> getAllBeneficiary() {
-		// TODO Auto-generated method stub
-		return null;
+		return beneficiaryRepo.findAll();
 	}
 
 	@Override
 	public Beneficary getBeneficiaryById(int benId) {
-		// TODO Auto-generated method stub
-		return null;
+		return beneficiaryRepo.findById(benId).get();
 	}
 
 	@Override
 	public Beneficary updateBeneficary(Beneficary beneficary) {
-		// TODO Auto-generated method stub
-		return null;
+		return beneficiaryRepo.save(beneficary);
 	}
+	
+	@Override
+	public void deleteBeneficiary(int benId) {
+		beneficiaryRepo.deleteById(benId);
+	}
+	
+	
 }

@@ -4,6 +4,7 @@ import com.learning.enums.Status;
 
 import javax.persistence.*;
 import java.util.List;
+
 import java.util.Objects;
 
 @Entity
@@ -14,9 +15,17 @@ public class Customer extends User {
 
     private long phoneNumber;
 
+
+	
+
+	public long getPhoneNumber() {
+		return phoneNumber;
+	}
+
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "cus_Acc_tbl", joinColumns = @JoinColumn(name = "person_id"))
     private List<Account> account;
+
 
 
     public Customer(int personId, String fullName, String userName, String passWord, long phoneNumber, Status status) {
@@ -25,14 +34,35 @@ public class Customer extends User {
         this.status = status;
     }
 
-    public long getPhoneNumber() {
-        return phoneNumber;
-    }
+    
 
     public void setPhoneNumber(long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Customer other = (Customer) obj;
+		return Objects.equals(account, other.account) && phoneNumber == other.phoneNumber;
+	}
+
+	public Customer() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public void addAccount(Account acc) {
+		account.add(acc);
+		
+	}
+	
     public List<Account> getAccount() {
         return account;
     }
@@ -58,17 +88,7 @@ public class Customer extends User {
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Customer other = (Customer) obj;
-        return Objects.equals(account, other.account) && phoneNumber == other.phoneNumber;
-    }
+    
 
 
 }
