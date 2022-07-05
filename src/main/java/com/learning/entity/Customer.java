@@ -14,9 +14,34 @@ public class Customer extends User {
     private Status status;
 
     private long phoneNumber;
-
+    private String secret_question;
+    private String secret_answer;
 
 	
+
+	public String getSecret_question() {
+		return secret_question;
+	}
+
+
+
+	public void setSecret_question(String secret_question) {
+		this.secret_question = secret_question;
+	}
+
+
+
+	public String getSecret_answer() {
+		return secret_answer;
+	}
+
+
+
+	public void setSecret_answer(String secret_answer) {
+		this.secret_answer = secret_answer;
+	}
+
+
 
 	public long getPhoneNumber() {
 		return phoneNumber;
@@ -36,7 +61,19 @@ public class Customer extends User {
 
     
 
-    public void setPhoneNumber(long phoneNumber) {
+    public Customer(int userId, String fullName, String userName, String passWord, Status status, long phoneNumber,
+			String secret_question, String secret_answer) {
+		super(userId, fullName, userName, passWord);
+		this.status = status;
+		this.phoneNumber = phoneNumber;
+		this.secret_question = secret_question;
+		this.secret_answer = secret_answer;
+		
+	}
+
+
+
+	public void setPhoneNumber(long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
