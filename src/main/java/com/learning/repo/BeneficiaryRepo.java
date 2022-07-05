@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface BeneficiaryRepo extends JpaRepository<Beneficary,Integer> {
     public List<Beneficary> findByIsApproved(String isApproved);
+    public Beneficary findByAccountNumber(long accountNumber);
 }

@@ -12,4 +12,5 @@ public interface BeneficiaryService {
 	public Beneficary getBeneficiaryById(int benId);
 	public Beneficary updateBeneficary(Beneficary beneficary);
     public List<Beneficary> findByIsApproved(String isApproved);
+	public Beneficary findByAccountNumber(long accountNumber);
 }
