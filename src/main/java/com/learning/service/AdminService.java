@@ -14,7 +14,6 @@ public interface AdminService {
 	public Admin updateAdmin(Admin admin);
 	public String deleteAdminById(int personId);
 	public Staff createStaff(Staff staff);
-	public String validateAdmin(String username, String password);
 	public List<Staff> getAllStaff();
-	public String setStaffStatus(int personId, Status status);	
+	public void setStaffStatus(int personId, Status status);	
 }

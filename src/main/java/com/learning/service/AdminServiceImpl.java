@@ -60,23 +60,6 @@ public class AdminServiceImpl implements AdminService {
 		adminRepo.deleteById(adminId);
 		return "Admin deleted with id:" + adminId;
 	}
-
-	@Override
-	public String validateAdmin(String username, String password) {
-		List<Admin> admins = new ArrayList<Admin>();
-		admins.addAll(adminRepo.findAll());
-		String msg = null;
-
-		for(Admin admin: admins) {
-			if((admin.getUserName().equals(username))&& (BCrypt.checkpw(password, admin.getPassWord()))) {
-				msg = "JWT Token";
-				break;
-			} else {
-				msg = "User details incorrect";
-			}
-		}
-		return msg;
-	}
 	
 	@Override
 	public Staff createStaff(Staff staff) {
@@ -89,15 +72,11 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public String setStaffStatus(int staffId, Status status) {
+	public void setStaffStatus(int staffId, Status status) {
 		Staff staff = staffRepo.findById(staffId).get();
 
 		staff.setStatus(status);
-		/*
-		 * if((status!=Status.DISABLE) || (status!=status.ENABLE)) { throw new
-		 * AccountStatusException("Staff status not changed"); }
-		 */
-		return "staff saved";
+		
 	}
 
 
