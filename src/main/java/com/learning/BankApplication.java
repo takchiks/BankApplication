@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import com.learning.repo.AdminRepo;
 
 @SpringBootApplication
-public class BankApplication implements CommandLineRunner{
+public class BankApplication{
 
 	@Autowired
 	private AdminRepo adminRepo;
@@ -19,9 +19,5 @@ public class BankApplication implements CommandLineRunner{
 		
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		
-	}
 
 }

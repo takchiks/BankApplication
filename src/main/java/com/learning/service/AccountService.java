@@ -8,7 +8,7 @@ public interface AccountService {
 	
 	public Account addAccount(Account account);
 	public List<Account> getAllAccount();
-	public Account getAccountById(long accountNumber);
+	public Account getAccountById(int accountNumber);
 	public Account updateAccount(Account account);
 	public List<Account> findByIsApproved(boolean isApproved);
 }

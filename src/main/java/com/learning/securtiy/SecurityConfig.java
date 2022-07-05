@@ -8,15 +8,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import com.learning.entity.User;
 
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Override
+    
+	@Override
     public void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
@@ -31,16 +29,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic();
     }
 
-    @Override
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
-    	auth.inMemoryAuthentication().withUser("taku").password(this.passwordEncoder().encode("taku")).roles("Staff");
-        auth.inMemoryAuthentication().withUser("taku2").password(this.passwordEncoder().encode("taku")).roles("Admin");
-    }
-
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    
+	@Override
+	public void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.inMemoryAuthentication().withUser("taku").password(this.bCryptPasswordEncoder().encode("taku")).roles("ADMIN");
+		auth.jdbcAuthentication().passwordEncoder(bCryptPasswordEncoder());
+	}
 
 }
+
 

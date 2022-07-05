@@ -30,7 +30,7 @@ public class AccountServiceImpl implements AccountService{
 	}
 
 	@Override
-	public Account getAccountById(long accountNumber) {
+	public Account getAccountById(int accountNumber) {
 		
 		return accountRepo.findById(accountNumber).get();
 	}
