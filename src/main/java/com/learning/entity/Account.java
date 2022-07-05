@@ -1,12 +1,17 @@
 package com.learning.entity;
 
+<<<<<<< HEAD
 import com.learning.enums.AccountTyoe;
 
+=======
+import com.learning.enums.AccountType;
+>>>>>>> branch 'master' of https://github.com/takchiks/BankApplication
 import com.learning.enums.Status;
 
 import java.util.Date;
 import java.util.List;
 
+<<<<<<< HEAD
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,16 +20,26 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+=======
+import javax.persistence.*;
+>>>>>>> branch 'master' of https://github.com/takchiks/BankApplication
 
 @Entity
 public class Account {
     @Id
+<<<<<<< HEAD
     @GeneratedValue(strategy = GenerationType.AUTO)
 	private long accountNumber;
 	private AccountTyoe accountType;
+=======
+	private int accountNumber;
+	@Enumerated(EnumType.STRING)
+	private AccountType accountType;
+>>>>>>> branch 'master' of https://github.com/takchiks/BankApplication
 	private double accountBalance;
 	private boolean isApproved;
 	private Date dateOfCreation;
+	@Enumerated(EnumType.STRING)
 	private Status status;
 	
 	@OneToMany
@@ -35,7 +50,11 @@ public class Account {
 	@JoinTable(name = "acc_Ben_tbl",joinColumns =@JoinColumn(name ="accountNumber"))
 	private List<Beneficary> beneficary;
 
+<<<<<<< HEAD
 	public Account(AccountTyoe accountType, double accountBalance, boolean isApproved, Status status) {
+=======
+	public Account(AccountType accountType, double accountBalance, boolean isApproved, Date dateOfCreation, Status status) {
+>>>>>>> branch 'master' of https://github.com/takchiks/BankApplication
 		super();
 		this.accountType = accountType;
 		this.accountBalance = accountBalance;
@@ -44,19 +63,19 @@ public class Account {
 		this.status=status;
 	}
 
-	public long getAccountNumber() {
+	public int getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(long accountNumber) {
+	public void setAccountNumber(int accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 
-	public AccountTyoe getAccountType() {
+	public AccountType getAccountType() {
 		return accountType;
 	}
 
-	public void setAccountType(AccountTyoe accountType) {
+	public void setAccountType(AccountType accountType) {
 		this.accountType = accountType;
 	}
 
