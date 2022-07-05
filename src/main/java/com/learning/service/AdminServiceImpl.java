@@ -12,6 +12,8 @@ import com.learning.enums.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.security.authentication.AccountStatusException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.learning.entity.Admin;
@@ -26,6 +28,9 @@ public class AdminServiceImpl implements AdminService {
 	@Autowired
 	private StaffRepo staffRepo;
    
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 	@Override
 	public void addAdmin(Admin admin) {
 		
@@ -61,9 +66,9 @@ public class AdminServiceImpl implements AdminService {
 		List<Admin> admins = new ArrayList<Admin>();
 		admins.addAll(adminRepo.findAll());
 		String msg = null;
-		
+
 		for(Admin admin: admins) {
-			if((admin.getUserName().equals(username))&& (admin.getPassWord().equals(password))) {
+			if((admin.getUserName().equals(username))&& (BCrypt.checkpw(password, admin.getPassWord()))) {
 				msg = "JWT Token";
 				break;
 			} else {
