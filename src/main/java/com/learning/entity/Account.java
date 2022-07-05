@@ -1,11 +1,13 @@
 package com.learning.entity;
 
 import com.learning.enums.AccountTyoe;
+
 import com.learning.enums.Status;
 
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,7 +19,7 @@ import javax.persistence.OneToMany;
 @Entity
 public class Account {
     @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
 	private long accountNumber;
 	private AccountTyoe accountType;
 	private double accountBalance;
@@ -29,17 +31,17 @@ public class Account {
 	@JoinTable(name = "acc_Tra_tbl",joinColumns =@JoinColumn(name ="accountNumber"))
 	private List<Transaction> transaction;
 	
-	@OneToMany
+	@OneToMany(cascade = {CascadeType.ALL})
 	@JoinTable(name = "acc_Ben_tbl",joinColumns =@JoinColumn(name ="accountNumber"))
 	private List<Beneficary> beneficary;
 
-	public Account(AccountTyoe accountType, double accountBalance, boolean isApproved, Date dateOfCreation, Status status) {
+	public Account(AccountTyoe accountType, double accountBalance, boolean isApproved, Status status) {
 		super();
 		this.accountType = accountType;
 		this.accountBalance = accountBalance;
 		this.isApproved = isApproved;
-		this.dateOfCreation = dateOfCreation;
-		this.status = status;
+		this.dateOfCreation = new Date();
+		this.status=status;
 	}
 
 	public long getAccountNumber() {
@@ -79,7 +81,7 @@ public class Account {
 	}
 
 	public void setDateOfCreation(Date dateOfCreation) {
-		this.dateOfCreation = dateOfCreation;
+		this.dateOfCreation = new Date();
 	}
 
 	public Status getStatus() {
@@ -106,7 +108,20 @@ public class Account {
 		this.beneficary = beneficary;
 	}
 	
+	public void addbeneficiary(Beneficary ben) {
+		 beneficary.add(ben);
+	}
+
+	public Account() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 	
-	
+	public void remove(Beneficary ben) {
+		beneficary.remove(ben);
+	}
+	public void addtransaction(Transaction trans) {
+		transaction.add(trans);
+	}
 	
 }

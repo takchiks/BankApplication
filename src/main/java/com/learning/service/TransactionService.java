@@ -7,9 +7,9 @@ import com.learning.entity.Transaction;
 
 public interface TransactionService {
 
-	public Transaction addAccount(Transaction transaction);
+	public Transaction addTransaction(Transaction transaction);
 	public List<Transaction> getAllTransaction();
-	public Transaction getAccountById(int transactionId);
-	public Transaction updateAccount(Transaction tsransaction);
+	public Transaction getTransactionById(int transactionId);
+	public Transaction updateTransaction(Transaction tsransaction);
 	
 }

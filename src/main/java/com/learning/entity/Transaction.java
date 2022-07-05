@@ -28,10 +28,10 @@ public class Transaction {
 	
 
 
-	public Transaction(Date date, String reference, double amount, int toAcc, int fromAcc, String reason,
+	public Transaction(String reference, double amount, int toAcc, int fromAcc, String reason,
 			PaymentType paymentType) {
 		super();
-		this.date = date;
+		this.date = new Date();
 		this.reference = reference;
 		this.amount = amount;
 		this.toAcc = toAcc;
@@ -49,8 +49,8 @@ public class Transaction {
 		return date;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setDate() {
+		this.date = new Date();
 	}
 
 	public String getReference() {

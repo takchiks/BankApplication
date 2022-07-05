@@ -1,6 +1,7 @@
 package com.learning.entity;
 
 import java.util.List;
+
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
@@ -24,6 +25,8 @@ public class Customer extends User {
 		super(personId, fullName, userName, passWord);
 		this.phoneNumber = phoneNumber;
 	}
+
+	
 
 	public long getPhoneNumber() {
 		return phoneNumber;
@@ -60,6 +63,18 @@ public class Customer extends User {
 		Customer other = (Customer) obj;
 		return Objects.equals(account, other.account) && phoneNumber == other.phoneNumber;
 	}
+
+	public Customer() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public void addAccount(Account acc) {
+		account.add(acc);
+		
+	}
+	
+	
 	
 	
 	

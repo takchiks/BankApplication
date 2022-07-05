@@ -14,7 +14,7 @@ public class TransactionServiceImpl implements TransactionService {
    private TransactionRepo transactionRepo;
 	
 	@Override
-	public Transaction addAccount(Transaction transaction) {
+	public Transaction addTransaction(Transaction transaction) {
 		
 		return transactionRepo.save(transaction);
 	}
@@ -26,13 +26,13 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	@Override
-	public Transaction getAccountById(int transactionId) {
+	public Transaction getTransactionById(int transactionId) {
 		
 		return transactionRepo.findById(transactionId).get();
 	}
 
 	@Override
-	public Transaction updateAccount(Transaction tsransaction) {
+	public Transaction updateTransaction(Transaction tsransaction) {
 		
 		return transactionRepo.save(tsransaction);
 	}

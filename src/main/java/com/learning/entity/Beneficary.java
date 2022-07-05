@@ -22,12 +22,12 @@ public class Beneficary {
 		
 	}
 
-	public Beneficary(long accountNumber, String accountType, String isApproved, Date date) {
+	public Beneficary(long accountNumber, String accountType, String isApproved) {
 		super();
 		this.accountNumber = accountNumber;
 		this.accountType = accountType;
 		this.isApproved = isApproved;
-		this.date = date;
+		this.date = new Date();
 	}
 
 	public int getBenId() {
@@ -66,8 +66,8 @@ public class Beneficary {
 		return date;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setDate() {
+		this.date = new Date();
 	}
 	
 	
