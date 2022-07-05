@@ -14,6 +14,7 @@ import com.learning.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
@@ -45,6 +46,7 @@ public class CustomerController {
 
     @PostMapping("/register")
     public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer){
+
     	customer.setStatus(Status.ENABLE);
     	return new ResponseEntity<Customer>(customerService.addCustomer(customer), HttpStatus.valueOf(201)); 	
     }
@@ -119,7 +121,7 @@ public class CustomerController {
     @GetMapping("/{customerID}/account")
 	public ResponseEntity<List<Account>> getAllAccounts(@PathVariable (name = "customerID") int customerID){
 		Customer cust = customerService.getCustomerById(customerID);
-		
+			System.out.println(cust);
 			return new ResponseEntity<List<Account>>(cust.getAccount(),HttpStatus.valueOf(200));
 		
 	}
@@ -191,7 +193,7 @@ public class CustomerController {
     
     @PutMapping("/transfer")
     public ResponseEntity<String> transferAmount(@RequestBody Transaction transaction){
-    	transaction.setDate();
+    	transaction.setDate(new Date());
     	Account fromAcc = null;
     	Account toAcc = null;
     	List<Account> allAccounts = accountService.getAllAccount();

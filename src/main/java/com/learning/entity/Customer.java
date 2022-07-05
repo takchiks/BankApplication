@@ -70,6 +70,16 @@ public class Customer extends User {
 		this.secret_answer = secret_answer;
 		
 	}
+    
+    
+
+
+
+	@Override
+	public String toString() {
+		return "Customer [status=" + status + ", phoneNumber=" + phoneNumber + ", secret_question=" + secret_question
+				+ ", secret_answer=" + secret_answer + ", account=" + account + "]";
+	}
 
 
 

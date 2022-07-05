@@ -1,5 +1,6 @@
 package com.learning.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import com.learning.entity.Staff;
 import com.learning.enums.Status;
 import com.learning.others.StaffStatus;
 import com.learning.others.UsernamePassword;
+import com.learning.repo.AdminRepo;
 import com.learning.service.AdminService;
 
 @RestController
@@ -63,28 +65,53 @@ public class AdminController {
 	}
 	
 	@PostMapping("/authenticate")
-	public String validateAdmin(@RequestBody UsernamePassword userPass) {
+	public ResponseEntity<String> validateAdmin(@RequestBody UsernamePassword userPass) {
 		String username = userPass.getUsername();
-		String encodedPassword = bCryptPasswordEncoder.encode(userPass.getPassword());
-		return adminService.validateAdmin(username, encodedPassword);
+		String password = userPass.getPassword();
+
+		List<Admin> admins = new ArrayList<Admin>();
+		admins.addAll(adminService.getAllAdmin());
+		
+		for(Admin admin: admins) {
+			if((admin.getUserName().equals(username)) && (bCryptPasswordEncoder.matches(password, admin.getPassWord()))) {
+				return new ResponseEntity<String>("JWT Token", HttpStatus.OK);
+			} 
+		}
+		return new ResponseEntity<String>("User details are incorrect", HttpStatus.FORBIDDEN);
 	}
 	
 	@PostMapping("/staff")
-	public Staff createStaff(@RequestBody Staff staff) {
+	public ResponseEntity<Staff> createStaff(@RequestBody Staff staff) {
 		String encodedPassword = bCryptPasswordEncoder.encode(staff.getPassWord());
 		staff.setPassWord(encodedPassword);
-		return adminService.createStaff(staff);
+		
+		List<Staff> staffArray = new ArrayList<Staff>();
+		staffArray.addAll(adminService.getAllStaff());
+		
+		for(Staff s: staffArray) {
+			if(s.getUserName().equals(staff.getUserName())) {
+				return new ResponseEntity<Staff>(HttpStatus.FORBIDDEN);
+			} 
+		}
+		
+		return new ResponseEntity<Staff>(adminService.createStaff(staff), HttpStatus.OK);
 	}
 	
 	@GetMapping("/staff")
-	public List<Staff> getAllStaff(){
-		return adminService.getAllStaff();
+	public ResponseEntity<List<Staff>> getAllStaff(){
+		return new ResponseEntity<List<Staff>>(adminService.getAllStaff(), HttpStatus.OK);
 	}
 	
 	@PutMapping("/staff")
 	public ResponseEntity<String> setStaffStatus(@RequestBody StaffStatus staffStatus) {
 		int staffId = staffStatus.getStaffId();
 		Status status = staffStatus.getStatus();
-		return new ResponseEntity<String>(adminService.setStaffStatus(staffId, status),HttpStatus.valueOf(200));
+		
+		if((status==Status.DISABLE) || (status==Status.ENABLE)) {
+			adminService.setStaffStatus(staffId, status);
+			return new ResponseEntity<String>("Staff status changed",HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>("Staff status not changed",HttpStatus.BAD_REQUEST);
+		}
 	}
 }

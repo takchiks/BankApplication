@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -44,7 +45,7 @@ public class StaffController {
         Account account;
         try {
             account = accountService.getAccountById(accNo);
-        } catch (NoSuchElementException nse) {
+        } catch (Exception nse) {
             account = null;
         }
         return account == null ? new ResponseEntity(new ErrorMapper("Account not found"), HttpStatus.OK) : new ResponseEntity(account, HttpStatus.OK);
@@ -121,12 +122,14 @@ public class StaffController {
     @GetMapping("/customer/{customerId}")
     public ResponseEntity getCustomerId(@PathVariable("customerId") int customerId) {
         Customer customer;
+        System.out.println(customerService.getAllCustomer());
+
         try {
             customer = customerService.getCustomerById(customerId);
         }catch (Exception ex){
             customer = null;
         }
-
+        System.out.println(customer);
 
         return customer == null? new ResponseEntity(new ErrorMapper("Customer Not Found"), HttpStatus.NOT_FOUND) :new ResponseEntity(customer, HttpStatus.OK);
     }
@@ -137,6 +140,7 @@ public class StaffController {
         //log
         System.out.println(transaction);
         Transaction transaction1;
+
         try {
             fromAccount = accountService.getAccountById(transaction.getFromAcc());
             toAccount = accountService.getAccountById(transaction.getToAcc());
@@ -147,6 +151,7 @@ public class StaffController {
 
             accountService.updateAccount(fromAccount);
             accountService.updateAccount(toAccount);
+            transaction.setDate(new Date());
 
             transaction1 = transactionService.addTransaction(transaction);
 
