@@ -2,19 +2,18 @@ package com.learning.controller;
 
 import java.util.List;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.learning.entity.Admin;
@@ -31,8 +30,13 @@ public class AdminController {
 	@Autowired
 	AdminService adminService;
 	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 	@PostMapping("/")
 	public void addAdmin(@RequestBody Admin admin) {
+		String encodedPassword = bCryptPasswordEncoder.encode(admin.getPassWord());
+		admin.setPassWord(encodedPassword);
 		adminService.addAdmin(admin);
 	}
 	
@@ -48,6 +52,8 @@ public class AdminController {
 	
 	@PutMapping("/")
 	public Admin updateAdmin(@RequestBody Admin admin) {
+		String encodedPassword = bCryptPasswordEncoder.encode(admin.getPassWord());
+		admin.setPassWord(encodedPassword);
 		return adminService.updateAdmin(admin);
 	}
 	
@@ -57,14 +63,16 @@ public class AdminController {
 	}
 	
 	@PostMapping("/authenticate")
-	public String validateAdmin(@RequestBody UsernamePassword up) {
-		String password = up.getPassword();
-		String username = up.getUsername();
-		return adminService.validateAdmin(username, password);
+	public String validateAdmin(@RequestBody UsernamePassword userPass) {
+		String username = userPass.getUsername();
+		String encodedPassword = bCryptPasswordEncoder.encode(userPass.getPassword());
+		return adminService.validateAdmin(username, encodedPassword);
 	}
 	
 	@PostMapping("/staff")
 	public Staff createStaff(@RequestBody Staff staff) {
+		String encodedPassword = bCryptPasswordEncoder.encode(staff.getPassWord());
+		staff.setPassWord(encodedPassword);
 		return adminService.createStaff(staff);
 	}
 	
@@ -74,9 +82,9 @@ public class AdminController {
 	}
 	
 	@PutMapping("/staff")
-	public String setStaffStatus(@RequestBody StaffStatus ss) {
-		int staffId = ss.getStaffId();
-		Status status = ss.getStatus();
-		return adminService.setStaffStatus(staffId, status);
+	public ResponseEntity<String> setStaffStatus(@RequestBody StaffStatus staffStatus) {
+		int staffId = staffStatus.getStaffId();
+		Status status = staffStatus.getStatus();
+		return new ResponseEntity<String>(adminService.setStaffStatus(staffId, status),HttpStatus.valueOf(200));
 	}
 }
