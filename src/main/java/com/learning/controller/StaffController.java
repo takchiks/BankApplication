@@ -62,15 +62,25 @@ public class StaffController {
 
     @PutMapping("/beneficiary")
     public ResponseEntity approveBeneficiary(@RequestBody BeneficaryResquest beneficaryRequest) {
-        Beneficary beneficary;
+        Beneficary beneficary = null;
+        List<Beneficary> beneficaryList;
         System.out.println(beneficaryRequest);
         try {
-            beneficary = beneficiaryService.findByAccountNumber(beneficaryRequest.getBeneficiaryAcNo());
+            beneficaryList = beneficiaryService.getAllBeneficiary();
+            for(Beneficary beneficary1: beneficaryList){
+                if(beneficary1.getAccountNumber()==beneficaryRequest.getBeneficiaryAcNo()){
+                    beneficary = beneficary1;
+                }
+
+            }
+
+//            beneficary = beneficiaryService.findByAccountNumber(beneficaryRequest.getBeneficiaryAcNo());
             beneficary.setApproved(beneficaryRequest.getApproved());
             beneficary.setDate(beneficaryRequest.getBeneficiaryAddedDate());
 
             beneficary = beneficiaryService.updateBeneficary(beneficary);
         }catch (Exception ex){
+            ex.printStackTrace();
             beneficary = null;
         }
         return beneficary == null ? new ResponseEntity(new ErrorMapper("Sorry beneficiary not approved"), HttpStatus.OK) : new ResponseEntity(beneficary, HttpStatus.OK);

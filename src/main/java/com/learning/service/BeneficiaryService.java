@@ -16,6 +16,6 @@ public interface BeneficiaryService {
     public void deleteBeneficiary(int benId);
     
 
-	public Beneficary findByAccountNumber(long accountNumber);
+	public Beneficary findByAccountNumber(int accountNumber);
 
 }
