@@ -4,6 +4,8 @@ import com.learning.entity.Account;
 import com.learning.entity.Beneficary;
 import com.learning.entity.Customer;
 import com.learning.entity.Transaction;
+import com.learning.enums.Status;
+import com.learning.pojo.ErrorMapper;
 import com.learning.service.AccountService;
 import com.learning.service.BeneficiaryService;
 import com.learning.service.CustomerService;
@@ -44,11 +46,29 @@ public class CustomerController {
 
     @PostMapping("/register")
     public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer){
+
+    	customer.setStatus(Status.ENABLE);
     	return new ResponseEntity<Customer>(customerService.addCustomer(customer), HttpStatus.valueOf(201)); 	
     }
     
     
     @GetMapping("/{customerId}/beneficiary")
+    public ResponseEntity<List<List<Beneficary>>> getBeneficiary(@PathVariable(name = "customerId") int customerId){
+        try{
+        	Customer customer = customerService.getCustomerById(customerId);
+        	List<Account> account = customer.getAccount();
+        	List<List<Beneficary>> ben1 = new ArrayList<List<Beneficary>>() ;
+        	for(Account acc:account) {
+        		ben1.add(acc.getBeneficary());
+        	}
+        	return new ResponseEntity<List<List<Beneficary>>>(ben1, HttpStatus.OK);
+        }
+        catch(NoSuchElementException e) {
+        	return new ResponseEntity<List<List<Beneficary>>>(new ArrayList<List<Beneficary>>(), HttpStatus.OK);
+        }
+    }
+    
+    @GetMapping("/{customerId}/transaction")
     public ResponseEntity<List<List<Beneficary>>> getApprovedBeneficiary(@PathVariable(name = "customerId") int customerId){
         try{
         	Customer customer = customerService.getCustomerById(customerId);
@@ -65,20 +85,24 @@ public class CustomerController {
     }
     
     @PostMapping("/{customerID}/account")
-	public ResponseEntity<Customer> createAccount(@PathVariable (name = "customerID") Integer customerID, @RequestBody Account acc) {
-		try{
-			
-			Customer customer = customerService.getCustomerById(customerID);
+	public ResponseEntity createAccount(@PathVariable (name = "customerID") Integer customerID, @RequestBody Account acc) {
+
+    	Customer customer;
+    	try{
+			customer = customerService.getCustomerById(customerID);
 			customer.addAccount(acc);
 			acc.setDateOfCreation(new Date());
 			//accountService.addAccount(acc);
-			customerService.updateCustomer(customer);
+			customerService.updateCustomer(customer);}
 		
 		
-			return new ResponseEntity<Customer>(customer, HttpStatus.OK);}
+			//return new ResponseEntity<Customer>(customer, HttpStatus.OK);}
 		catch(NullPointerException e) {
-			return new ResponseEntity<Customer>(new Customer(), HttpStatus.valueOf(403));
+			//return new ResponseEntity<Customer>(new Customer(), HttpStatus.valueOf(403));
+			acc = null;
 		}
+    	
+    	return acc == null ? new ResponseEntity(new ErrorMapper("Account cannot be created"), HttpStatus.OK) : new ResponseEntity(acc, HttpStatus.OK);
 	}
     
     /*@PutMapping("/{customerID}/account/{accountID}")
@@ -97,33 +121,40 @@ public class CustomerController {
     @GetMapping("/{customerID}/account")
 	public ResponseEntity<List<Account>> getAllAccounts(@PathVariable (name = "customerID") int customerID){
 		Customer cust = customerService.getCustomerById(customerID);
-		
+			System.out.println(cust);
 			return new ResponseEntity<List<Account>>(cust.getAccount(),HttpStatus.valueOf(200));
 		
 	}
     
     @GetMapping("/{customerID}")
-	public ResponseEntity<Customer> getCustomer (@PathVariable (name = "customerID") int customerID) {
+	public ResponseEntity getCustomer (@PathVariable (name = "customerID") int customerID) {
+		Customer customer;
 		try{
-			return new ResponseEntity<Customer>(customerService.getCustomerById(customerID),HttpStatus.valueOf(200));
+			//return new ResponseEntity<Customer>(customerService.getCustomerById(customerID),HttpStatus.valueOf(200));
+			customer = customerService.getCustomerById(customerID);
 		}
-		catch(NullPointerException e) {
-			return new ResponseEntity<Customer>(new Customer(),HttpStatus.NOT_FOUND);
+		catch(Exception e) {
+			//return new ResponseEntity<Customer>(new Customer(),HttpStatus.NOT_FOUND);
+			customer = null;
 		}
+		return customer == null? new ResponseEntity(new ErrorMapper("Sorry, Customer with ID "+customerID+" Not Found"), HttpStatus.NOT_FOUND) :new ResponseEntity(customer, HttpStatus.OK);
 	} 
     
     @PutMapping("/{customerID}")
 	public ResponseEntity<Customer> updateCustomer(@PathVariable (name = "customerID") int customerID, @RequestBody Customer cust) {
-		try{
-			Customer customer = customerService.getCustomerById(customerID);
+    	Customer customer;
+    	try{
+			customer = customerService.getCustomerById(customerID);
 			customer.setFullName(cust.getFullName());
 			customer.setUserName(cust.getUserName());
 			customer.setPassWord(cust.getPassWord());
-			customer.setPhoneNumber(cust.getPhoneNumber());
-			return new ResponseEntity<Customer>(customerService.updateCustomer(customer), HttpStatus.valueOf(200));}
+			customer.setPhoneNumber(cust.getPhoneNumber());}
+			//return new ResponseEntity<Customer>(customerService.updateCustomer(customer), HttpStatus.valueOf(200));}
 		catch(NoSuchElementException e) {
-			return new ResponseEntity<Customer>(new Customer(), HttpStatus.NOT_FOUND);
+			//return new ResponseEntity<Customer>(new Customer(), HttpStatus.NOT_FOUND);
+			customer=null;
 		}
+    	return customer == null? new ResponseEntity(new ErrorMapper("Sorry, Customer with ID "+customerID+" Not Found"), HttpStatus.NOT_FOUND) :new ResponseEntity(customer, HttpStatus.OK);
 	}
     
     @PostMapping("/{customerID}/beneficiary")
@@ -160,8 +191,9 @@ public class CustomerController {
     	return null;
     }
     
-    @PostMapping("/transfer")
+    @PutMapping("/transfer")
     public ResponseEntity<String> transferAmount(@RequestBody Transaction transaction){
+    	transaction.setDate(new Date());
     	Account fromAcc = null;
     	Account toAcc = null;
     	List<Account> allAccounts = accountService.getAllAccount();
@@ -192,7 +224,16 @@ public class CustomerController {
     	toAcc.addtransaction(trans);
     	
     	return new ResponseEntity<String>("Amount is transfered ",HttpStatus.valueOf(200));
-    	
-    
     } 
+    
+    @GetMapping("/{username}/forgot/{question}/{answer}")
+    public ResponseEntity<String> validateDetailsforSecretKey(@PathVariable (name = "username") String username, @PathVariable (name = "question") String question,@PathVariable (name = "answer") String answer ) {
+    	List<Customer> customer = customerService.getAllCustomer();
+    	for(Customer custom:customer) {
+    		if((custom.getUserName()==username) && custom.getSecret_question()==question && custom.getSecret_answer()==answer) {
+    			return new ResponseEntity<String>("Details Validated",HttpStatus.valueOf(200));
+    		}
+    	}
+    	return new ResponseEntity<String>("Sorry your secret details are not matching",HttpStatus.valueOf(200));
+    }
 }
