@@ -13,7 +13,7 @@ public class Beneficary {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int benId;
 	@Column(unique=true)
-	private long accountNumber;
+	private int accountNumber;
 	@Enumerated(EnumType.STRING)
 	private AccountType accountType;
 	private String isApproved;
@@ -23,12 +23,8 @@ public class Beneficary {
 		super();
 		
 	}
-
-<<<<<<< HEAD
-	public Beneficary(long accountNumber, String accountType, String isApproved) {
-=======
-	public Beneficary(long accountNumber, AccountType accountType, String isApproved, Date date) {
->>>>>>> branch 'master' of https://github.com/takchiks/BankApplication
+	
+	public Beneficary(int accountNumber, AccountType accountType, String isApproved) {
 		super();
 		this.accountNumber = accountNumber;
 		this.accountType = accountType;
@@ -44,11 +40,11 @@ public class Beneficary {
 		this.benId = benId;
 	}
 
-	public long getAccountNumber() {
+	public int getAccountNumber() {
 		return accountNumber;
 	}
 
-	public void setAccountNumber(long accountNumber) {
+	public void setAccountNumber(int accountNumber) {
 		this.accountNumber = accountNumber;
 	}
 
@@ -72,8 +68,8 @@ public class Beneficary {
 		return date;
 	}
 
-	public void setDate() {
-		this.date = new Date();
+	public void setDate(Date date) {
+		this.date = date;
 	}
 	
 	
