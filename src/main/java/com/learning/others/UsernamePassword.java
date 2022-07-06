@@ -1,29 +1,36 @@
 package com.learning.others;
 
 public class UsernamePassword {
-	private String Username;
-	private String Password;
+	private String username;
+	private String password;
 	
 	public UsernamePassword() {
 		super();
 	}
 	public UsernamePassword(String username, String password) {
 		super();
-		Username = username;
-		Password = password;
+		this.username = username;
+		this.password = password;
 	}
 	
 	public String getUsername() {
-		return Username;
+		return username;
 	}
 	public void setUsername(String username) {
-		Username = username;
+		this.username = username;
 	}
 	public String getPassword() {
-		return Password;
+		return password;
 	}
 	public void setPassword(String password) {
-		Password = password;
+		this.password = password;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "UsernamePassword{" +
+				"username='" + username + '\'' +
+				", password='" + password + '\'' +
+				'}';
+	}
 }

@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -21,6 +22,7 @@ public class User {
 	private int userId;
 	private String fullName;
 	private String userName;
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String passWord;
 	public User(int userId, String fullName, String userName, String passWord) {
 		super();
