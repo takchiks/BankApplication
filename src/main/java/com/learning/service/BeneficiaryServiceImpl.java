@@ -19,7 +19,7 @@ public class BeneficiaryServiceImpl implements BeneficiaryService{
     }
 
 	@Override
-	public Beneficary findByAccountNumber(long accountNumber) {
+	public Beneficary findByAccountNumber(int accountNumber) {
 		return beneficiaryRepo.findByAccountNumber(accountNumber);
 	}
 
