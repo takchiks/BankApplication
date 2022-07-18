@@ -92,6 +92,7 @@ public class CustomerController {
 			customer = customerService.getCustomerById(customerID);
 			customer.addAccount(acc);
 			acc.setDateOfCreation(new Date());
+			acc.setStatus(Status.ENABLE);
 			//accountService.addAccount(acc);
 			customerService.updateCustomer(customer);}
 		
