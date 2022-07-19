@@ -77,6 +77,8 @@ public class AdminServiceImpl implements AdminService {
 
 		staff.setStatus(status);
 		
+		staffRepo.save(staff);
+		
 	}
 
 

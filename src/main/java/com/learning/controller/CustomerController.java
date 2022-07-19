@@ -14,6 +14,7 @@ import com.learning.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,6 +47,9 @@ public class CustomerController {
     
     @Autowired 
     private TransactionService transactionService;
+    
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer){
@@ -95,6 +99,7 @@ public class CustomerController {
 			customer = customerService.getCustomerById(customerID);
 			customer.addAccount(acc);
 			acc.setDateOfCreation(new Date());
+			acc.setStatus(Status.ENABLE);
 			//accountService.addAccount(acc);
 			customerService.updateCustomer(customer);}
 		
@@ -108,7 +113,10 @@ public class CustomerController {
     	return acc == null ? new ResponseEntity(new ErrorMapper("Account cannot be created"), HttpStatus.OK) : new ResponseEntity(acc, HttpStatus.OK);
 	}
     
-    /*@PutMapping("/{customerID}/account/{accountID}")
+    /*
+     * 
+	@PreAuthorize("hasAuthority('STAFF')")
+     * @PutMapping("/{customerID}/account/{accountID}")
 	public Account approveAccount(@MatrixVariable (pathVar = "customerID") int customerID, @MatrixVariable (pathVar = "accountID") int accountID) {
 		Customer cust = customerService.getCustomerById(customerID);
 		List<Account> account = cust.getAccount();
@@ -151,7 +159,9 @@ public class CustomerController {
 			customer.setFullName(cust.getFullName());
 			customer.setUserName(cust.getUserName());
 			customer.setPassWord(cust.getPassWord());
-			customer.setPhoneNumber(cust.getPhoneNumber());}
+			customer.setPhoneNumber(cust.getPhoneNumber());
+			customerService.updateCustomer(customer);
+    	}
 			//return new ResponseEntity<Customer>(customerService.updateCustomer(customer), HttpStatus.valueOf(200));}
 		catch(NoSuchElementException e) {
 			//return new ResponseEntity<Customer>(new Customer(), HttpStatus.NOT_FOUND);
@@ -173,7 +183,8 @@ public class CustomerController {
     		return new ResponseEntity<String>("Sorry beneficiary with account ID "+ben.getAccountNumber()+" not added", HttpStatus.NOT_FOUND);
     	}
     }
-    
+
+	@PreAuthorize("hasAuthority('CUSTOMER')")
     @DeleteMapping("/{customerID}/beneficary/{beneficaryID}")
     public ResponseEntity<String> deleteBeneficary(@PathVariable (name = "customerID") int customerID, @PathVariable (name = "beneficaryID") int beneficaryID){
     	Customer customer = customerService.getCustomerById(customerID);
@@ -228,12 +239,13 @@ public class CustomerController {
     	
     	return new ResponseEntity<String>("Amount is transfered ",HttpStatus.valueOf(200));
     } 
-    
+
+	@PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/{username}/forgot/{question}/{answer}")
     public ResponseEntity<String> validateDetailsforSecretKey(@PathVariable (name = "username") String username, @PathVariable (name = "question") String question,@PathVariable (name = "answer") String answer ) {
     	List<Customer> customer = customerService.getAllCustomer();
     	for(Customer custom:customer) {
-    		if((custom.getUserName()==username) && custom.getSecret_question()==question && custom.getSecret_answer()==answer) {
+    		if((custom.getUserName()==username) && custom.getSecret_question()==question && bCryptPasswordEncoder.matches(answer, custom.getSecret_answer())) {
     			return new ResponseEntity<String>("Details Validated",HttpStatus.valueOf(200));
     		}
     	}
