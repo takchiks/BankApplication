@@ -3,6 +3,8 @@ package com.learning.entity;
 import java.util.Objects;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,6 +12,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.learning.enums.RoleType;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -24,6 +28,10 @@ public class User {
 	private String userName;
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String passWord;
+
+	@Enumerated(EnumType.STRING)
+	private RoleType role;
+	
 	public User(int userId, String fullName, String userName, String passWord) {
 		super();
 		this.userId = userId;
@@ -31,10 +39,22 @@ public class User {
 		this.userName = userName;
 		this.passWord = passWord;
 	}
+	
+	
+	public User(int userId, String fullName, String userName, String passWord, RoleType role) {
+		super();
+		this.userId = userId;
+		this.fullName = fullName;
+		this.userName = userName;
+		this.passWord = passWord;
+		this.role = role;
+	}
+
+
 	public User() {
 		super();
 	}
-	public int getuserId() {
+	public int getUserId() {
 		return userId;
 	}
 	public void setPersonId(int personId) {
@@ -74,6 +94,23 @@ public class User {
 		return Objects.equals(fullName, other.fullName) && Objects.equals(passWord, other.passWord)
 				&& userId == other.userId && Objects.equals(userName, other.userName);
 	}
+
+
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+
+	public RoleType getRole() {
+		return role;
+	}
+
+
+	public void setRole(RoleType role) {
+		this.role = role;
+	}
+	
 	
 	
 	
