@@ -43,6 +43,9 @@ public class CustomerController {
     
     @Autowired 
     private TransactionService transactionService;
+    
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer){
@@ -149,7 +152,9 @@ public class CustomerController {
 			customer.setFullName(cust.getFullName());
 			customer.setUserName(cust.getUserName());
 			customer.setPassWord(cust.getPassWord());
-			customer.setPhoneNumber(cust.getPhoneNumber());}
+			customer.setPhoneNumber(cust.getPhoneNumber());
+			customerService.updateCustomer(customer);
+    	}
 			//return new ResponseEntity<Customer>(customerService.updateCustomer(customer), HttpStatus.valueOf(200));}
 		catch(NoSuchElementException e) {
 			//return new ResponseEntity<Customer>(new Customer(), HttpStatus.NOT_FOUND);
@@ -231,7 +236,7 @@ public class CustomerController {
     public ResponseEntity<String> validateDetailsforSecretKey(@PathVariable (name = "username") String username, @PathVariable (name = "question") String question,@PathVariable (name = "answer") String answer ) {
     	List<Customer> customer = customerService.getAllCustomer();
     	for(Customer custom:customer) {
-    		if((custom.getUserName()==username) && custom.getSecret_question()==question && custom.getSecret_answer()==answer) {
+    		if((custom.getUserName()==username) && custom.getSecret_question()==question && bCryptPasswordEncoder.matches(answer, custom.getSecret_answer())) {
     			return new ResponseEntity<String>("Details Validated",HttpStatus.valueOf(200));
     		}
     	}
