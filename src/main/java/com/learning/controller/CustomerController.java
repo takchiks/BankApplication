@@ -1,11 +1,14 @@
 package com.learning.controller;
 
+import com.learning.entity.Login;
 import com.learning.entity.Account;
 import com.learning.entity.Beneficary;
 import com.learning.entity.Customer;
 import com.learning.entity.Transaction;
+import com.learning.entity.User;
 import com.learning.enums.Status;
 import com.learning.pojo.ErrorMapper;
+import com.learning.repo.UserRepo;
 import com.learning.service.AccountService;
 import com.learning.service.BeneficiaryService;
 import com.learning.service.CustomerService;
@@ -15,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.MatrixVariable;
@@ -30,6 +34,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/api/customer")
 public class CustomerController {
@@ -40,6 +45,9 @@ public class CustomerController {
     private CustomerService customerService;
     @Autowired 
     private AccountService accountService;
+    
+    @Autowired
+	private UserRepo userRepo;
     
     @Autowired 
     private TransactionService transactionService;
@@ -149,7 +157,8 @@ public class CustomerController {
 			customer.setFullName(cust.getFullName());
 			customer.setUserName(cust.getUserName());
 			customer.setPassWord(cust.getPassWord());
-			customer.setPhoneNumber(cust.getPhoneNumber());}
+			customer.setPhoneNumber(cust.getPhoneNumber());
+			customerService.updateCustomer(customer);}
 			//return new ResponseEntity<Customer>(customerService.updateCustomer(customer), HttpStatus.valueOf(200));}
 		catch(NoSuchElementException e) {
 			//return new ResponseEntity<Customer>(new Customer(), HttpStatus.NOT_FOUND);
@@ -192,7 +201,7 @@ public class CustomerController {
     	return null;
     }
     
-    @PutMapping("/transfer")
+    @PostMapping("/transfer")
     public ResponseEntity<String> transferAmount(@RequestBody Transaction transaction){
     	transaction.setDate(new Date());
     	Account fromAcc = null;
@@ -217,13 +226,16 @@ public class CustomerController {
     	fromAcc.setAccountBalance(fromAcc.getAccountBalance()-transaction.getAmount());
     	toAcc.setAccountBalance(toAcc.getAccountBalance()+transaction.getAmount());
     	
-    	accountService.updateAccount(fromAcc);
-    	accountService.updateAccount(toAcc);
+    	
+    	//accountService.updateAccount(fromAcc);
+    	//accountService.updateAccount(toAcc);
     	
     	Transaction trans = transactionService.addTransaction(transaction);
     	fromAcc.addtransaction(trans);
     	toAcc.addtransaction(trans);
     	
+    	accountService.updateAccount(fromAcc);
+    	accountService.updateAccount(toAcc);
     	return new ResponseEntity<String>("Amount is transfered ",HttpStatus.valueOf(200));
     } 
     
@@ -237,4 +249,18 @@ public class CustomerController {
     	}
     	return new ResponseEntity<String>("Sorry your secret details are not matching",HttpStatus.valueOf(200));
     }
+    
+    @PostMapping("/token")
+	public String generateToken(@RequestBody Login login) {
+		System.out.println("The username entered is " + login.getUsername() + " and the password is " + login.getPassword());
+		
+		return customerService.getToken(login.getUsername(), login.getPassword());
+		
+	}
+    
+    @PostMapping("/login")
+	public User login(@RequestBody User user) {
+		User user1 = userRepo.findByUserNameAndPassWord(user.getUserName(), user.getPassWord());
+		return user1;
+	}
 }

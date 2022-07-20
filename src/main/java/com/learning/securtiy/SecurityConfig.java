@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 //@EnableWebSecurity
 //@EnableGlobalMethodSecurity(prePostEnabled = true)
 
-@EnableWebSecurity
+//@EnableWebSecurity
 
 
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -43,6 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
 //                .antMatchers("/api/customer*").hasRole("Customer")
                 .antMatchers("/api/customer/authenticate","/api/staff/authenticate","/api/admin/authenticate").permitAll()
+                .antMatchers("/api/customer/register").permitAll()
                 .antMatchers("/api/staff*").hasRole("Staff")
                 .antMatchers("/api/admin*").hasRole("Admin")
                 .anyRequest()
