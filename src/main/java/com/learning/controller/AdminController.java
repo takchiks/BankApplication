@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -54,31 +55,36 @@ public class AdminController {
 	
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-	
+
+    @PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/")
 	public void addAdmin(@RequestBody Admin admin) {
 		String encodedPassword = bCryptPasswordEncoder.encode(admin.getPassWord());
 		admin.setPassWord(encodedPassword);
 		adminService.addAdmin(admin);
 	}
-	
+
+    @PreAuthorize("hasAuthority('ADMIN') ")
 	@GetMapping("/all")
 	public List<Admin> getAllAdmin(){
 		return adminService.getAllAdmin();
 	}
-	
+
+    @PreAuthorize("hasAuthority('ADMIN') ")
 	@GetMapping("/{adminId}")
 	public Admin getAdminById(@PathVariable(name = "adminId") int personId) {
 		return adminService.getAdminById(personId);
 	}
-	
+
+    @PreAuthorize("hasAuthority('ADMIN') ")
 	@PutMapping("/")
 	public Admin updateAdmin(@RequestBody Admin admin) {
 		String encodedPassword = bCryptPasswordEncoder.encode(admin.getPassWord());
 		admin.setPassWord(encodedPassword);
 		return adminService.updateAdmin(admin);
 	}
-	
+
+    @PreAuthorize("hasAuthority('ADMIN') ")
 	@DeleteMapping("/{adminId}")
 	public String deleteAdminById(@PathVariable(name="adminId") int personId) {
 		return adminService.deleteAdminById(personId);
@@ -109,7 +115,7 @@ public class AdminController {
         }
 //        return new ResponseEntity(HttpStatus.OK);/
     }
-	
+    @PreAuthorize("hasAuthority('STAFF') or hasAuthority('ADMIN') ")
 	@PostMapping(value = "/staff", consumes="application/json")
 	public ResponseEntity<Staff> createStaff(@RequestBody Staff staff) {
 		System.out.println(staff);
@@ -127,7 +133,7 @@ public class AdminController {
 		
 		return new ResponseEntity<Staff>(adminService.createStaff(staff), HttpStatus.OK);
 	}
-	
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/staff")
 	public ResponseEntity<List<Staff>> getAllStaff(){
 		return new ResponseEntity<List<Staff>>(adminService.getAllStaff(), HttpStatus.OK);

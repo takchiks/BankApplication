@@ -88,6 +88,7 @@ public class StaffController {
 //        return new ResponseEntity(HttpStatus.OK);/
 	}
 
+	@PreAuthorize("hasAuthority('STAFF')")
 	@GetMapping("/account/{accountNo}")
 	public ResponseEntity getAccountDetails(@PathVariable("accountNo") int accNo) {
 		Account account;
@@ -102,7 +103,8 @@ public class StaffController {
 	}
 
 	// Start here
-	@PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STAFF')")
+	// @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('STAFF')")
+	@PreAuthorize("hasAuthority('STAFF')")
 	@GetMapping("/beneficiary")
 	public ResponseEntity<List<Beneficary>> getApprovedBeneficiary() {
 
@@ -110,6 +112,7 @@ public class StaffController {
 
 	}
 
+	@PreAuthorize("hasAuthority('STAFF')")
 	@PutMapping("/beneficiary")
 	public ResponseEntity approveBeneficiary(@RequestBody BeneficaryResquest beneficaryRequest) {
 		Beneficary beneficary = null;
@@ -138,6 +141,7 @@ public class StaffController {
 
 	}
 
+	@PreAuthorize("hasAuthority('STAFF')")
 	@GetMapping("/accounts/approve")
 	public ResponseEntity<List<Account>> getApprovedAccounts() {
 
@@ -145,6 +149,7 @@ public class StaffController {
 
 	}
 
+	@PreAuthorize("hasAuthority('STAFF')")
 	@PutMapping("/accounts/approve")
 	public ResponseEntity approveAccounts(@RequestBody AccountRequest account) {
 		Account account1;
@@ -161,6 +166,7 @@ public class StaffController {
 
 	}
 
+	@PreAuthorize("hasAuthority('STAFF')")
 	@GetMapping("/customer")
 	public ResponseEntity<List<Customer>> getAllCustomer() {
 
@@ -183,6 +189,7 @@ public class StaffController {
 				: new ResponseEntity(customerService.updateCustomer(customer), HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasAuthority('STAFF')")
 	@GetMapping("/customer/{customerId}")
 	public ResponseEntity getCustomerId(@PathVariable("customerId") int customerId) {
 		Customer customer;
@@ -199,6 +206,7 @@ public class StaffController {
 				: new ResponseEntity(customer, HttpStatus.OK);
 	}
 
+	@PreAuthorize("hasAuthority('STAFF')")
 	@PutMapping("/transfer")
 	public ResponseEntity transfer(@RequestBody Transaction transaction) {
 		Account fromAccount, toAccount;
@@ -241,7 +249,7 @@ public class StaffController {
 			String user = jwtUtil.validateTokenAndRetrieveSubject(body.getToken());
 
 			System.out.println(user);
-			Staff userToken =  staffService.getStaffById(userRepo.findByUserName(user).get().getUserId());
+			Staff userToken = staffService.getStaffById(userRepo.findByUserName(user).get().getUserId());
 
 			return new ResponseEntity<>(userToken, HttpStatus.ACCEPTED);
 		} catch (Exception authExc) {
