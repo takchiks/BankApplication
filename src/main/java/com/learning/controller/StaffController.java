@@ -81,7 +81,7 @@ public class StaffController {
 
 			String token = jwtUtil.generateToken(body.getUsername());
 
-			return new ResponseEntity<>(Collections.singletonMap("jwt-token", token), HttpStatus.ACCEPTED);
+			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
 			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
 		}

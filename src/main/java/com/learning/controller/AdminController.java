@@ -43,20 +43,23 @@ import com.learning.service.AdminService;
 @RequestMapping("/api/admin")
 public class AdminController {
 
-    @Autowired private JWTUtil jwtUtil;
-    @Autowired private AuthenticationManager authManager;
-    @Autowired private PasswordEncoder passwordEncoder;
+	@Autowired
+	private JWTUtil jwtUtil;
+	@Autowired
+	private AuthenticationManager authManager;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	@Autowired
 	private UserRepo userRepo;
-	
+
 	@Autowired
 	AdminService adminService;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	@PostMapping("/")
 	public void addAdmin(@RequestBody Admin admin) {
 		String encodedPassword = bCryptPasswordEncoder.encode(admin.getPassWord());
@@ -64,19 +67,19 @@ public class AdminController {
 		adminService.addAdmin(admin);
 	}
 
-    @PreAuthorize("hasAuthority('ADMIN') ")
+	@PreAuthorize("hasAuthority('ADMIN') ")
 	@GetMapping("/all")
-	public List<Admin> getAllAdmin(){
+	public List<Admin> getAllAdmin() {
 		return adminService.getAllAdmin();
 	}
 
-    @PreAuthorize("hasAuthority('ADMIN') ")
+	@PreAuthorize("hasAuthority('ADMIN') ")
 	@GetMapping("/{adminId}")
 	public Admin getAdminById(@PathVariable(name = "adminId") int personId) {
 		return adminService.getAdminById(personId);
 	}
 
-    @PreAuthorize("hasAuthority('ADMIN') ")
+	@PreAuthorize("hasAuthority('ADMIN') ")
 	@PutMapping("/")
 	public Admin updateAdmin(@RequestBody Admin admin) {
 		String encodedPassword = bCryptPasswordEncoder.encode(admin.getPassWord());
@@ -84,73 +87,75 @@ public class AdminController {
 		return adminService.updateAdmin(admin);
 	}
 
-    @PreAuthorize("hasAuthority('ADMIN') ")
+	@PreAuthorize("hasAuthority('ADMIN') ")
 	@DeleteMapping("/{adminId}")
-	public String deleteAdminById(@PathVariable(name="adminId") int personId) {
+	public String deleteAdminById(@PathVariable(name = "adminId") int personId) {
 		return adminService.deleteAdminById(personId);
 	}
-	
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<Map<String, Object>> authenticate(@RequestBody UsernamePassword body) {
+	@PostMapping("/authenticate")
+	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody UsernamePassword body) {
 
-        try {
-            System.out.println(body);
-            UsernamePasswordAuthenticationToken authInputToken =
-                    new UsernamePasswordAuthenticationToken(body.getUsername(), body.getPassword());
+		try {
+			System.out.println(body);
+			UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(
+					body.getUsername(), body.getPassword());
 
-            authManager.authenticate(authInputToken);
+			authManager.authenticate(authInputToken);
 
-            RoleType role = userRepo.findByUserName(body.getUsername()).get().getRole();
-            
-            if(role!=RoleType.ADMIN) {
-            	return new ResponseEntity("NOT ADMIN!! CHECK USER",HttpStatus.BAD_REQUEST);
-            }
-            
-            String token = jwtUtil.generateToken(body.getUsername());
+			RoleType role = userRepo.findByUserName(body.getUsername()).get().getRole();
 
-            return new ResponseEntity<>(Collections.singletonMap("jwt-token", token), HttpStatus.ACCEPTED);
-        } catch (AuthenticationException authExc) {
-        	return new ResponseEntity("WRONG USERNAME OR PASSWORD",HttpStatus.BAD_REQUEST);
-        }
+			if (role != RoleType.ADMIN) {
+				return new ResponseEntity("NOT ADMIN!! CHECK USER", HttpStatus.BAD_REQUEST);
+			}
+
+			String token = jwtUtil.generateToken(body.getUsername());
+
+			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
+		} catch (AuthenticationException authExc) {
+			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
+		}
 //        return new ResponseEntity(HttpStatus.OK);/
-    }
-    @PreAuthorize("hasAuthority('STAFF') or hasAuthority('ADMIN') ")
-	@PostMapping(value = "/staff", consumes="application/json")
+	}
+
+	@PreAuthorize("hasAuthority('STAFF') or hasAuthority('ADMIN') ")
+	@PostMapping(value = "/staff", consumes = "application/json")
 	public ResponseEntity<Staff> createStaff(@RequestBody Staff staff) {
 		System.out.println(staff);
 		String encodedPassword = bCryptPasswordEncoder.encode(staff.getPassWord());
 		staff.setPassWord(encodedPassword);
-		
+
 		List<Staff> staffArray = new ArrayList<Staff>();
 		staffArray.addAll(adminService.getAllStaff());
-		
-		for(Staff s: staffArray) {
-			if(s.getUserName().equals(staff.getUserName())) {
+
+		for (Staff s : staffArray) {
+			if (s.getUserName().equals(staff.getUserName())) {
 				return new ResponseEntity<Staff>(HttpStatus.FORBIDDEN);
-			} 
+			}
 		}
-		
+
 		return new ResponseEntity<Staff>(adminService.createStaff(staff), HttpStatus.OK);
 	}
+
 	@PreAuthorize("hasAuthority('ADMIN')")
 	@GetMapping("/staff")
-	public ResponseEntity<List<Staff>> getAllStaff(){
+	public ResponseEntity<List<Staff>> getAllStaff() {
 		return new ResponseEntity<List<Staff>>(adminService.getAllStaff(), HttpStatus.OK);
 	}
-	
+
 	@PutMapping("/staff")
 	public ResponseEntity<String> setStaffStatus(@RequestBody StaffStatus staffStatus) {
 		int staffId = staffStatus.getStaffId();
 		Status status = staffStatus.getStatus();
-		
-		if((status==Status.DISABLE) || (status==Status.ENABLE)) {
+
+		if ((status == Status.DISABLE) || (status == Status.ENABLE)) {
 			adminService.setStaffStatus(staffId, status);
-			return new ResponseEntity<String>("Staff status changed",HttpStatus.OK);
+			return new ResponseEntity<String>("Staff status changed", HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Staff status not changed",HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<String>("Staff status not changed", HttpStatus.BAD_REQUEST);
 		}
 	}
+
 	@PostMapping("/getuser")
 	public ResponseEntity<Admin> getUser(@RequestBody TokenPojo body) {
 
@@ -160,12 +165,12 @@ public class AdminController {
 			String user = jwtUtil.validateTokenAndRetrieveSubject(body.getToken());
 
 			System.out.println(user);
-			Admin userToken =  adminService.getAdminById(userRepo.findByUserName(user).get().getUserId());
+			Admin userToken = adminService.getAdminById(userRepo.findByUserName(user).get().getUserId());
 
 			return new ResponseEntity<>(userToken, HttpStatus.ACCEPTED);
 		} catch (Exception authExc) {
 			authExc.printStackTrace();
-			
+
 //            throw new RuntimeException("Invalid Login Credentials");
 
 		}
