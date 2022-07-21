@@ -35,7 +35,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
+@CrossOrigin
 @RestController
 @RequestMapping("/api/staff")
 public class StaffController {
@@ -206,7 +206,7 @@ public class StaffController {
 				: new ResponseEntity(customer, HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('STAFF')")
+	//@PreAuthorize("hasAuthority('STAFF')")
 	@PutMapping("/transfer")
 	public ResponseEntity transfer(@RequestBody Transaction transaction) {
 		Account fromAccount, toAccount;
