@@ -17,14 +17,14 @@ public class Staff extends User {
 		
 	}
 
-	public Staff(int staffId, String fullName, String userName, String passWord) {
-		super(staffId, fullName, userName, passWord);
+	public Staff(int userId, String fullName, String userName, String passWord) {
+		super(userId, fullName, userName, passWord);
 		
 	}
 
 
-	public Staff(int staffId, String fullName, String userName, String passWord, Status status) {
-		super(staffId, fullName, userName, passWord);
+	public Staff(int userId, String fullName, String userName, String passWord, Status status) {
+		super(userId, fullName, userName, passWord);
 		this.status = status;
 	}
 

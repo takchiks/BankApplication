@@ -24,9 +24,10 @@ public class MyUserDetailsService implements UserDetailsService {
         if (userRes.isEmpty())
             throw new UsernameNotFoundException("Could not findUser with email = " + username);
         User user = userRes.get();
+        System.out.println(user.getRole().toString());
         return new org.springframework.security.core.userdetails.User(
                 username,
                 user.getPassWord(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+                Collections.singletonList(new SimpleGrantedAuthority(user.getRole().toString())));
     }
 }
