@@ -64,6 +64,7 @@ public class StaffController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	
 	@PostMapping("/authenticate")
 	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody UsernamePassword body) {
 
