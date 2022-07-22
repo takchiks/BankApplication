@@ -67,6 +67,7 @@ public class StaffController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	
 	@PostMapping("/authenticate")
 	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody UsernamePassword body) {
 
@@ -80,14 +81,14 @@ public class StaffController {
 			RoleType role = userRepo.findByUserName(body.getUsername()).get().getRole();
 
 			if (role != RoleType.STAFF) {
-				return new ResponseEntity("NOT STAFF!! CHECK USER", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity(new ErrorMapper("NOT STAFF!! CHECK USER"), HttpStatus.BAD_REQUEST);
 			}
 
 			String token = jwtUtil.generateToken(body.getUsername());
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
-			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
 	}
@@ -97,9 +98,12 @@ public class StaffController {
 	public ResponseEntity getAccountDetails(@PathVariable("accountNo") int accNo) {
 		Account account;
 		try {
+			System.out.println(accNo);
 			account = accountService.getAccountById(accNo);
+			System.out.println(account);
 		} catch (Exception nse) {
 			account = null;
+			nse.printStackTrace();
 		}
 		return account == null ? new ResponseEntity(new ErrorMapper("Account not found"), HttpStatus.OK)
 				: new ResponseEntity(account, HttpStatus.OK);
@@ -164,8 +168,10 @@ public class StaffController {
 			account1 = accountService.getAccountById(account.getAccountNumber());
 
 			account1.setApproved(true);
+			accountService.updateAccount(account1);
 		} catch (Exception ex) {
 			account1 = null;
+			ex.printStackTrace();
 		}
 		return account1 == null
 				? new ResponseEntity(new ErrorMapper("Approving of account was not successful"), HttpStatus.OK)
@@ -233,6 +239,8 @@ public class StaffController {
 		try {
 			customer = customerService.getCustomerById(customerRequest.getCustomerId());
 			customer.setStatus(customerRequest.getStatus());
+			customerService.updateCustomer(customer);
+			System.out.println("enable customer");
 		} catch (Exception ex) {
 			customer = null;
 		}
@@ -328,7 +336,7 @@ public class StaffController {
 //            throw new RuntimeException("Invalid Login Credentials");
 
 		}
-		return new ResponseEntity("WRONG CREDENTIALS", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity(new ErrorMapper("WRONG CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 
 }
