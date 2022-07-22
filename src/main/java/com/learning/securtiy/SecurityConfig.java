@@ -40,7 +40,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
+<<<<<<< HEAD
                 .antMatchers("/api/customer/authenticate","/api/customer/getuser","/api/customer/register","/api/admin/login","/api/staff/authenticate","/api/staff/getuser","/api/admin/authenticate").permitAll()
+=======
+                .antMatchers("/api/customer/authenticate","/api/admin/login","/api/staff/authenticate","/api/staff/getuser","/api/staff/beneficiary","/api/admin/authenticate").permitAll()
+               // .antMatchers("/api/staff/authenticate").permitAll()
+
+                //.antMatchers("/api/staff/transfer").permitAll()
+                //.antMatchers("/api/staff/beneficiary").permitAll()
+                //.antMatchers("api/admin/staff").permitAll()
+//                .antMatchers("/api/admin*").hasRole("Admin")
+
+              
+>>>>>>> branch 'master' of https://github.com/takchiks/BankApplication
                 .anyRequest()
                 .authenticated()
                 .and()

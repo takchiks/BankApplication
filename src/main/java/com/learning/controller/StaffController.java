@@ -6,6 +6,7 @@ import com.learning.entity.Customer;
 import com.learning.entity.Staff;
 import com.learning.entity.Transaction;
 import com.learning.entity.User;
+import com.learning.enums.PaymentType;
 import com.learning.enums.RoleType;
 import com.learning.others.UsernamePassword;
 import com.learning.pojo.AccountRequest;
@@ -31,10 +32,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @CrossOrigin
@@ -78,14 +81,14 @@ public class StaffController {
 			RoleType role = userRepo.findByUserName(body.getUsername()).get().getRole();
 
 			if (role != RoleType.STAFF) {
-				return new ResponseEntity("NOT STAFF!! CHECK USER", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity(new ErrorMapper("NOT STAFF!! CHECK USER"), HttpStatus.BAD_REQUEST);
 			}
 
 			String token = jwtUtil.generateToken(body.getUsername());
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
-			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
 	}
@@ -112,6 +115,7 @@ public class StaffController {
 	@PreAuthorize("hasAuthority('STAFF')")
 	@GetMapping("/beneficiary")
 	public ResponseEntity<List<Beneficary>> getApprovedBeneficiary() {
+		System.out.println("approved beneficary");
 
 		return new ResponseEntity<List<Beneficary>>(beneficiaryService.findByIsApproved("No"), HttpStatus.OK);
 
@@ -124,14 +128,16 @@ public class StaffController {
 		List<Beneficary> beneficaryList;
 		System.out.println(beneficaryRequest);
 		try {
+		
 			beneficaryList = beneficiaryService.getAllBeneficiary();
 			for (Beneficary beneficary1 : beneficaryList) {
 				if (beneficary1.getAccountNumber() == beneficaryRequest.getBeneficiaryAcNo()) {
 					beneficary = beneficary1;
+			    System.out.println("The account number is "+beneficary1.getAccountNumber());		
 				}
 
 			}
-
+			System.out.println("approving beneficary");
 //            beneficary = beneficiaryService.findByAccountNumber(beneficaryRequest.getBeneficiaryAcNo());
 			beneficary.setApproved(beneficaryRequest.getApproved());
 			beneficary.setDate(beneficaryRequest.getBeneficiaryAddedDate());
@@ -179,7 +185,53 @@ public class StaffController {
 
 		return new ResponseEntity<List<Customer>>(customerService.getAllCustomer(), HttpStatus.OK);
 	}
+	
+	@GetMapping("/{customerId}/transaction1")
+	public ResponseEntity<List<Transaction>> getTransaction(
+			@PathVariable(name = "customerId") int customerId) {
+		List<Transaction> transaction = transactionService.getAllTransaction();
+		List<Transaction> finalTransaction = new ArrayList<Transaction>();
+		try {
+			Customer customer = customerService.getCustomerById(customerId);
+			List<Account> account = customer.getAccount();
+			for(Account acc:account) {
+				for(Transaction trans:transaction) {
+					if(acc.getAccountNumber()==trans.getFromAcc() || acc.getAccountNumber()==trans.getToAcc()) {
+						finalTransaction.add(trans);
+					}
+				}
+			
+			}
+			return new ResponseEntity<List<Transaction>>(finalTransaction, HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<List<Transaction>>(new ArrayList<Transaction>(), HttpStatus.OK);
+		}
+	}
 
+	@GetMapping("/{accountNumber}/transaction2")
+	public ResponseEntity<List<Transaction>> getTransactionByAccount(
+			@PathVariable(name = "accountNumber") int accountNumber) {
+		List<Transaction> transaction = transactionService.getAllTransaction();
+		List<Transaction> finalTransaction = new ArrayList<Transaction>();
+		try {
+			//Customer customer = customerService.getCustomerById(accountNumber);
+			Account account = accountService.getAccountById(accountNumber);
+			// List<Account> account = customer.getAccount();
+			// for(Account acc:account) {
+				for(Transaction trans:transaction) {
+					if(account.getAccountNumber()==trans.getFromAcc()|| account.getAccountNumber()==trans.getToAcc()) {
+						finalTransaction.add(trans);
+					}
+				}
+			
+			//}
+			return new ResponseEntity<List<Transaction>>(finalTransaction, HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<List<Transaction>>(new ArrayList<Transaction>(), HttpStatus.OK);
+		}
+	}
+
+	
 	@PutMapping("/customer")
 	public ResponseEntity enableCustomer(@RequestBody CustomerRequest customerRequest) {
 		Customer customer;
@@ -215,7 +267,7 @@ public class StaffController {
 				: new ResponseEntity(customer, HttpStatus.OK);
 	}
 
-	@PreAuthorize("hasAuthority('STAFF')")
+	// @PreAuthorize("hasAuthority('STAFF')")
 	@PutMapping("/transfer")
 	public ResponseEntity transfer(@RequestBody Transaction transaction) {
 		Account fromAccount, toAccount;
@@ -224,6 +276,7 @@ public class StaffController {
 		Transaction transaction1;
 
 		try {
+			transaction.setDate(new Date());
 			fromAccount = accountService.getAccountById(transaction.getFromAcc());
 			toAccount = accountService.getAccountById(transaction.getToAcc());
 			if ((fromAccount.getAccountBalance() < transaction.getAmount()) || !fromAccount.isApproved()
@@ -231,22 +284,39 @@ public class StaffController {
 				throw new RuntimeException();
 			fromAccount.setAccountBalance(fromAccount.getAccountBalance() - transaction.getAmount());
 			toAccount.setAccountBalance(fromAccount.getAccountBalance() + transaction.getAmount());
-
+ 
+			List list = new ArrayList();
+			list.addAll(toAccount.getTransaction());
+			list.add(transaction);	
+			toAccount.setTransaction(list);
+		    
+			List list2 = new ArrayList();
+			list2.addAll(fromAccount.getTransaction());
+			list2.add(transaction);
+			toAccount.setTransaction(list2);
+			
+			// (String reference, double amount, int toAcc, int fromAcc, String reason,PaymentType paymentType)
+		  Transaction t1 = new Transaction(transaction.getReference(),transaction.getAmount(), transaction.getToAcc(), transaction.getFromAcc() , transaction.getReason(), transaction.getPaymentType());
+		//  t1 = transaction
+		
+			
 			accountService.updateAccount(fromAccount);
 			accountService.updateAccount(toAccount);
-			transaction.setDate(new Date());
+			
 
-			transaction1 = transactionService.addTransaction(transaction);
+			// transaction1 = transactionService.addTransaction(transaction);
 
 		} catch (Exception ex) {
 			fromAccount = null;
 			toAccount = null;
-			transaction1 = null;
+			transaction= null;
+			
+			ex.printStackTrace();
 		}
 
-		return transaction1 == null
+		return transaction == null
 				? new ResponseEntity(new ErrorMapper("From/To Account Number Not Valid"), HttpStatus.NOT_FOUND)
-				: new ResponseEntity(transaction1, HttpStatus.OK);
+				: new ResponseEntity(transaction, HttpStatus.OK);
 	}
 
 	@PostMapping("/getuser")
@@ -266,7 +336,7 @@ public class StaffController {
 //            throw new RuntimeException("Invalid Login Credentials");
 
 		}
-		return new ResponseEntity("WRONG CREDENTIALS", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity(new ErrorMapper("WRONG CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 
 }
