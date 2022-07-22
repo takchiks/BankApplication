@@ -224,6 +224,7 @@ public class CustomerController {
 		try {
 			Account account = accountService.getAccountById(ben.getAccountNumber());
 			Customer customer = customerService.getCustomerById(customerID);
+			ben = new Beneficary(ben.getAccountNumber(), ben.getAccountType(),ben.isApproved() );
 			account.addbeneficiary(ben);
 			accountService.updateAccount(account);
 			return new ResponseEntity<String>("Beneficiary with account ID" + ben.getAccountNumber() + " added",
