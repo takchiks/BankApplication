@@ -89,6 +89,7 @@ public class CustomerController {
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
+			authExc.printStackTrace();
 			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
@@ -219,20 +220,21 @@ public class CustomerController {
 	}
 
 	@PostMapping("/{customerID}/beneficiary")
-	public ResponseEntity<String> addBeneficary(@PathVariable(name = "customerID") int customerID,
+	public ResponseEntity<Account> addBeneficary(@PathVariable(name = "customerID") int customerID,
 			@RequestBody Beneficary ben) {
 		try {
 			Account account = accountService.getAccountById(ben.getAccountNumber());
 			Customer customer = customerService.getCustomerById(customerID);
 			ben = new Beneficary(ben.getAccountNumber(), ben.getAccountType(),ben.isApproved() );
 			account.addbeneficiary(ben);
-			accountService.updateAccount(account);
-			return new ResponseEntity<String>("Beneficiary with account ID" + ben.getAccountNumber() + " added",
+			System.out.println(ben);
+			account = accountService.updateAccount(account);
+			return new ResponseEntity<Account>(account,
 					HttpStatus.valueOf(200));
 		}
 
 		catch (NoSuchElementException e) {
-			return new ResponseEntity<String>(
+			return new ResponseEntity(
 					"Sorry beneficiary with account ID " + ben.getAccountNumber() + " not added", HttpStatus.NOT_FOUND);
 		}
 	}

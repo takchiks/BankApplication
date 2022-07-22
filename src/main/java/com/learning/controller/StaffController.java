@@ -64,6 +64,7 @@ public class StaffController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
+	
 	@PostMapping("/authenticate")
 	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody UsernamePassword body) {
 
@@ -94,9 +95,12 @@ public class StaffController {
 	public ResponseEntity getAccountDetails(@PathVariable("accountNo") int accNo) {
 		Account account;
 		try {
+			System.out.println(accNo);
 			account = accountService.getAccountById(accNo);
+			System.out.println(account);
 		} catch (Exception nse) {
 			account = null;
+			nse.printStackTrace();
 		}
 		return account == null ? new ResponseEntity(new ErrorMapper("Account not found"), HttpStatus.OK)
 				: new ResponseEntity(account, HttpStatus.OK);
@@ -158,8 +162,10 @@ public class StaffController {
 			account1 = accountService.getAccountById(account.getAccountNumber());
 
 			account1.setApproved(true);
+			accountService.updateAccount(account1);
 		} catch (Exception ex) {
 			account1 = null;
+			ex.printStackTrace();
 		}
 		return account1 == null
 				? new ResponseEntity(new ErrorMapper("Approving of account was not successful"), HttpStatus.OK)
@@ -181,6 +187,8 @@ public class StaffController {
 		try {
 			customer = customerService.getCustomerById(customerRequest.getCustomerId());
 			customer.setStatus(customerRequest.getStatus());
+			customerService.updateCustomer(customer);
+			System.out.println("enable customer");
 		} catch (Exception ex) {
 			customer = null;
 		}
