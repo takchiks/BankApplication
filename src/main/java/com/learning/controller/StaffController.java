@@ -78,14 +78,14 @@ public class StaffController {
 			RoleType role = userRepo.findByUserName(body.getUsername()).get().getRole();
 
 			if (role != RoleType.STAFF) {
-				return new ResponseEntity("NOT STAFF!! CHECK USER", HttpStatus.BAD_REQUEST);
+				return new ResponseEntity(new ErrorMapper("NOT STAFF!! CHECK USER"), HttpStatus.BAD_REQUEST);
 			}
 
 			String token = jwtUtil.generateToken(body.getUsername());
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
-			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
 	}
@@ -266,7 +266,7 @@ public class StaffController {
 //            throw new RuntimeException("Invalid Login Credentials");
 
 		}
-		return new ResponseEntity("WRONG CREDENTIALS", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity(new ErrorMapper("WRONG CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 
 }

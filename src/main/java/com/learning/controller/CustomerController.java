@@ -89,7 +89,7 @@ public class CustomerController {
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
-			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
 	}
@@ -327,6 +327,6 @@ public class CustomerController {
 //            throw new RuntimeException("Invalid Login Credentials");
 
 		}
-		return new ResponseEntity("WRONG CREDENTIALS", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity(new ErrorMapper("WRONG CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 }
