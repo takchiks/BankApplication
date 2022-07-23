@@ -143,7 +143,7 @@ public class CustomerController {
 //		}
 //	}
 	
-	@GetMapping("/{customerId}/transaction")
+	@GetMapping("/{customerId}/transaction1")
 	public ResponseEntity<List<Transaction>> getTransaction(
 			@PathVariable(name = "customerId") int customerId) {
 		List<Transaction> transaction = transactionService.getAllTransaction();
