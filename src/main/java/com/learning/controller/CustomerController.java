@@ -84,15 +84,17 @@ public class CustomerController {
 	public ResponseEntity<Map<String, Object>> authenticate(@RequestBody UsernamePassword body) {
 
 		try {
-			System.out.println(body);
+			//System.out.println(body);
 			UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(
 					body.getUsername(), body.getPassword());
 
 			authManager.authenticate(authInputToken);
 
 			RoleType role = userRepo.findByUserName(body.getUsername()).get().getRole();
+			System.out.println(role);
 
 			String token = jwtUtil.generateToken(body.getUsername());
+			System.out.println(token);
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
@@ -125,19 +127,41 @@ public class CustomerController {
 		}
 	}
 
+//	@GetMapping("/{customerId}/transaction")
+//	public ResponseEntity<List<List<Beneficary>>> getApprovedBeneficiary(
+//			@PathVariable(name = "customerId") int customerId) {
+//		try {
+//			Customer customer = customerService.getCustomerById(customerId);
+//			List<Account> account = customer.getAccount();
+//			List<List<Beneficary>> ben1 = new ArrayList<List<Beneficary>>();
+//			for (Account acc : account) {
+//				ben1.add(acc.getBeneficary());
+//			}
+//			return new ResponseEntity<List<List<Beneficary>>>(ben1, HttpStatus.OK);
+//		} catch (NoSuchElementException e) {
+//			return new ResponseEntity<List<List<Beneficary>>>(new ArrayList<List<Beneficary>>(), HttpStatus.OK);
+//		}
+//	}
+	
 	@GetMapping("/{customerId}/transaction")
-	public ResponseEntity<List<List<Beneficary>>> getApprovedBeneficiary(
+	public ResponseEntity<List<Transaction>> getTransaction(
 			@PathVariable(name = "customerId") int customerId) {
+		List<Transaction> transaction = transactionService.getAllTransaction();
+		List<Transaction> finalTransaction = new ArrayList<Transaction>();
 		try {
 			Customer customer = customerService.getCustomerById(customerId);
 			List<Account> account = customer.getAccount();
-			List<List<Beneficary>> ben1 = new ArrayList<List<Beneficary>>();
-			for (Account acc : account) {
-				ben1.add(acc.getBeneficary());
+			for(Account acc:account) {
+				for(Transaction trans:transaction) {
+					if(acc.getAccountNumber()==trans.getFromAcc()) {
+						finalTransaction.add(trans);
+					}
+				}
+			
 			}
-			return new ResponseEntity<List<List<Beneficary>>>(ben1, HttpStatus.OK);
+			return new ResponseEntity<List<Transaction>>(finalTransaction, HttpStatus.OK);
 		} catch (NoSuchElementException e) {
-			return new ResponseEntity<List<List<Beneficary>>>(new ArrayList<List<Beneficary>>(), HttpStatus.OK);
+			return new ResponseEntity<List<Transaction>>(new ArrayList<Transaction>(), HttpStatus.OK);
 		}
 	}
 
@@ -345,7 +369,7 @@ public class CustomerController {
 					HttpStatus.valueOf(200));
 		}
 
-		catch (NoSuchElementException e) {
+		catch (Exception e) {
 			return new ResponseEntity<String>(
 					"Sorry beneficiary with account ID " + ben.getAccountNumber() + " not added", HttpStatus.NOT_FOUND);
 		}

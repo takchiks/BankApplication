@@ -42,26 +42,30 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        http
+        http .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
+
 //                .antMatchers("/api/customer*").hasRole("Customer")
 
-                .antMatchers("/api/customer/authenticate","/api/staff/authenticate","/api/admin/authenticate").permitAll()
-                .antMatchers("/api/customer/register").permitAll()
-                //.antMatchers("/api/customer/{customerID}").permitAll()
-                .antMatchers("/api/customer/getuser").permitAll()
-                .antMatchers("/api/customer/getuserID").permitAll()
-                .antMatchers("/api/customer/{customerID}/account").permitAll()
-                //.antMatchers("/api/customer/getuser").permitAll()
-                .antMatchers("/api/customer/forgotpassword").permitAll()
-                .antMatchers("/api/customer/{username}/forgot/{question}/{answer}").permitAll()
-                .antMatchers("/api/customer/authenticate").permitAll()
+                .antMatchers("/api/customer/authenticate","/api/staff/authenticate","/api/admin/authenticate","/api/customer/register","/api/customer/forgotpassword","/api/customer/{username}/forgot/{question}/{answer}").permitAll()
+//                .antMatchers("/api/customer/register").permitAll()
+//                //.antMatchers("/api/customer/{customerID}").permitAll()
+//                .antMatchers("/api/customer/getuser").permitAll()
+//                .antMatchers("/api/customer/getuserID").permitAll()
+//                .antMatchers("/api/customer/{customerID}/account").permitAll()
+//                //.antMatchers("/api/customer/getuser").permitAll()
+//                .antMatchers("/api/customer/forgotpassword").permitAll()
+//                .antMatchers("/api/customer/{username}/forgot/{question}/{answer}").permitAll()
+//                .antMatchers("/api/customer/authenticate").permitAll()
                 .antMatchers("/api/staff*").hasRole("Staff")
                 .antMatchers("/api/admin*").hasRole("Admin")
 
+
+
                 .antMatchers("/api/customer/authenticate","/api/admin/login","/api/staff/authenticate","/api/staff/getuser").permitAll()
                 .antMatchers("/api/staff/authenticate").permitAll()
+
                 
 //                .antMatchers("/api/admin*").hasRole("Admin")
 
