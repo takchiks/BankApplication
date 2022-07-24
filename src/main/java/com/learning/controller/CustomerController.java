@@ -8,6 +8,7 @@ import com.learning.entity.Transaction;
 import com.learning.enums.RoleType;
 import com.learning.enums.Status;
 import com.learning.others.UsernamePassword;
+import com.learning.pojo.CustomerRequestUpdate;
 import com.learning.pojo.ErrorMapper;
 import com.learning.pojo.TokenPojo;
 import com.learning.repo.UserRepo;
@@ -188,14 +189,19 @@ public class CustomerController {
 
 	@PutMapping("/{customerID}")
 	public ResponseEntity<Customer> updateCustomer(@PathVariable(name = "customerID") int customerID,
-			@RequestBody Customer cust) {
+			@RequestBody CustomerRequestUpdate cust) {
 		Customer customer;
+		System.out.print(cust);
 		try {
 			customer = customerService.getCustomerById(customerID);
 			customer.setFullName(cust.getFullName());
-			customer.setUserName(cust.getUserName());
-			customer.setPassWord(cust.getPassWord());
+			customer.setStatus(cust.getStatus());
+			customer.setSecret_question(cust.getSecret_question());
+			if(cust.getSecret_answer()!=customer.getSecret_answer())
+				customer.setSecret_answer(bCryptPasswordEncoder.encode(cust.getSecret_answer()));
 			customer.setPhoneNumber(cust.getPhoneNumber());
+
+
 			customerService.updateCustomer(customer);
 		}
 		// return new ResponseEntity<Customer>(customerService.updateCustomer(customer),
@@ -231,8 +237,8 @@ public class CustomerController {
 	}
 
 	@PreAuthorize("hasAuthority('CUSTOMER')")
-	@DeleteMapping("/{customerID}/beneficary/{beneficaryID}")
-	public ResponseEntity<String> deleteBeneficary(@PathVariable(name = "customerID") int customerID,
+	@DeleteMapping("/{customerID}/beneficiary/{beneficaryID}")
+	public ResponseEntity deleteBeneficary(@PathVariable(name = "customerID") int customerID,
 			@PathVariable(name = "beneficaryID") int beneficaryID) {
 		Customer customer = customerService.getCustomerById(customerID);
 		List<Account> account = customer.getAccount();
@@ -243,7 +249,7 @@ public class CustomerController {
 				acc.remove(ben1);
 				beneficiaryService.deleteBeneficiary(beneficaryID);
 				temp = 1;
-				return new ResponseEntity<String>("Beneficiary Deleted", HttpStatus.OK);
+				return new ResponseEntity(ben1, HttpStatus.OK);
 			}
 		}
 		if (temp == 0) {

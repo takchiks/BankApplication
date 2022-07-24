@@ -27,8 +27,6 @@ public class MyUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Could not findUser with username = " + username);
         User user = userRes.get();
         System.out.println(Collections.singletonList(new SimpleGrantedAuthority(user.getRole().toString())));
-        List authList = new ArrayList();
-        authList.add(new SimpleGrantedAuthority(user.getRole().toString()));
         return new org.springframework.security.core.userdetails.User(
                 username,
                 user.getPassWord(),
