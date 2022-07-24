@@ -156,7 +156,7 @@ public class StaffController {
 	@GetMapping("/accounts/approve")
 	public ResponseEntity<List<Account>> getApprovedAccounts() {
 
-		return new ResponseEntity<List<Account>>(accountService.findByIsApproved(false), HttpStatus.OK);
+		return new ResponseEntity<List<Account>>(accountService.findByIsApproved(true), HttpStatus.OK);
 
 	}
 
