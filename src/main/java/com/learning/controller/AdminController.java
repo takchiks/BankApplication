@@ -144,15 +144,15 @@ public class AdminController {
 	}
 
 	@PutMapping("/staff")
-	public ResponseEntity<String> setStaffStatus(@RequestBody StaffStatus staffStatus) {
-		int staffId = staffStatus.getStaffId();
+	public ResponseEntity<User> setStaffStatus(@RequestBody Staff staffStatus) {
+		int staffId = staffStatus.getUserId();
 		Status status = staffStatus.getStatus();
 
 		if ((status == Status.DISABLE) || (status == Status.ENABLE)) {
 			adminService.setStaffStatus(staffId, status);
-			return new ResponseEntity<String>("Staff status changed", HttpStatus.OK);
+			return new ResponseEntity<User>(staffStatus, HttpStatus.OK);
 		} else {
-			return new ResponseEntity<String>("Staff status not changed", HttpStatus.BAD_REQUEST);
+			return new ResponseEntity(new ErrorMapper("Staff status not changed"), HttpStatus.BAD_REQUEST);
 		}
 	}
 

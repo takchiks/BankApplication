@@ -127,5 +127,13 @@ public class Account {
 	public void addtransaction(Transaction trans) {
 		transaction.add(trans);
 	}
+
+	@Override
+	public String toString() {
+		return "Account [accountNumber=" + accountNumber + ", accountType=" + accountType + ", accountBalance="
+				+ accountBalance + ", isApproved=" + isApproved + ", dateOfCreation=" + dateOfCreation + ", status="
+				+ status + ", transaction=" + transaction + ", beneficary=" + beneficary + "]";
+	}
+	
 	
 }

@@ -89,12 +89,9 @@ public class CustomerController {
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
-<<<<<<< HEAD
 			authExc.printStackTrace();
-			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
-=======
 			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
->>>>>>> branch 'master' of https://github.com/takchiks/BankApplication
+
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
 	}
@@ -103,6 +100,7 @@ public class CustomerController {
 	public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer) {
 
 		customer.setStatus(Status.ENABLE);
+		customer.setRole(RoleType.CUSTOMER);
 		return new ResponseEntity<Customer>(customerService.addCustomer(customer), HttpStatus.valueOf(201));
 	}
 
@@ -161,18 +159,7 @@ public class CustomerController {
 				: new ResponseEntity(acc, HttpStatus.OK);
 	}
 
-	/*
-	 * 
-	 * @PreAuthorize("hasAuthority('STAFF')")
-	 * 
-	 * @PutMapping("/{customerID}/account/{accountID}") public Account
-	 * approveAccount(@MatrixVariable (pathVar = "customerID") int
-	 * customerID, @MatrixVariable (pathVar = "accountID") int accountID) { Customer
-	 * cust = customerService.getCustomerById(customerID); List<Account> account =
-	 * cust.getAccount(); for(Account acc:account) {
-	 * if(acc.getAccountNumber()==accountID) { acc.setApproved("Yes"); return acc; }
-	 * } return null; }
-	 */
+	
 
 	@GetMapping("/{customerID}/account")
 	public ResponseEntity<List<Account>> getAllAccounts(@PathVariable(name = "customerID") int customerID) {
@@ -229,7 +216,7 @@ public class CustomerController {
 		try {
 			Account account = accountService.getAccountById(ben.getAccountNumber());
 			Customer customer = customerService.getCustomerById(customerID);
-			ben = new Beneficary(ben.getAccountNumber(), ben.getAccountType(),ben.isApproved() );
+			ben = new Beneficary(ben.getAccountNumber(), ben.getAccountType(),ben.getIsApproved() );
 			account.addbeneficiary(ben);
 			System.out.println(ben);
 			account = accountService.updateAccount(account);
