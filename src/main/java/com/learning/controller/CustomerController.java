@@ -7,6 +7,7 @@ import com.learning.entity.Beneficary;
 import com.learning.entity.Customer;
 import com.learning.entity.Transaction;
 import com.learning.entity.User;
+import com.learning.enums.PaymentType;
 import com.learning.enums.RoleType;
 
 import com.learning.enums.Status;
@@ -99,7 +100,10 @@ public class CustomerController {
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
 			System.out.println("WRONG PASSWORD OR USERNAME");
-			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
+			authExc.printStackTrace();
+			//return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
+
+			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
 	}
@@ -153,7 +157,7 @@ public class CustomerController {
 			List<Account> account = customer.getAccount();
 			for(Account acc:account) {
 				for(Transaction trans:transaction) {
-					if(acc.getAccountNumber()==trans.getFromAcc()) {
+					if(acc.getAccountNumber()==trans.getFromAcc() || acc.getAccountNumber()==trans.getToAcc()) {
 						finalTransaction.add(trans);
 					}
 				}
@@ -356,24 +360,28 @@ public class CustomerController {
 		return user1;}
 
 	@PostMapping("/{customerID}/beneficiary")
-	public ResponseEntity<String> addBeneficary(@PathVariable(name = "customerID") int customerID,
+	public ResponseEntity<Account> addBeneficary(@PathVariable(name = "customerID") int customerID,
 			@RequestBody Beneficary ben) {
 		try {
 			Account account = accountService.getAccountById(ben.getAccountNumber());
 			Customer customer = customerService.getCustomerById(customerID);
 			ben.setDate(new Date());
 			ben.setApproved("false");
+
+			ben = new Beneficary(ben.getAccountNumber(), ben.getAccountType(),ben.isApproved() );
+
 			account.addbeneficiary(ben);
-			accountService.updateAccount(account);
-			return new ResponseEntity<String>("Beneficiary with account ID" + ben.getAccountNumber() + " added",
+			System.out.println(ben);
+			account = accountService.updateAccount(account);
+			return new ResponseEntity<Account>(account,
 					HttpStatus.valueOf(200));
 		}
 
-		catch (Exception e) {
-			return new ResponseEntity<String>(
-					"Sorry beneficiary with account ID " + ben.getAccountNumber() + " not added", HttpStatus.NOT_FOUND);
-		}
-	}
+		catch (NoSuchElementException e) {
+			return new ResponseEntity("Sorry beneficiary with account ID " + ben.getAccountNumber() + " not added", HttpStatus.NOT_FOUND);
+		}catch (Exception e) {
+			return new ResponseEntity("Sorry beneficiary with account ID "+ ben.getAccountNumber() + " not added", HttpStatus.NOT_FOUND);
+	}}
 
 	@PreAuthorize("hasAuthority('CUSTOMER')")
 	@DeleteMapping("/{customerID}/beneficary/{beneficaryID}")
@@ -400,6 +408,8 @@ public class CustomerController {
 	@PutMapping("/transfer")
 	public ResponseEntity<String> transferAmount(@RequestBody Transaction transaction) {
 		transaction.setDate(new Date());
+		transaction.setReference("No references required");
+		System.out.println("I got hit");
 		Account fromAcc = null;
 		Account toAcc = null;
 		List<Account> allAccounts = accountService.getAllAccount();
@@ -416,20 +426,30 @@ public class CustomerController {
 		if (fromAcc == null || toAcc == null) {
 			return new ResponseEntity<String>("From/To Account Number isn't valid", HttpStatus.NOT_FOUND);
 		}
+		
+		if(fromAcc.getStatus().equals(Status.DISABLE)|| toAcc.getStatus().equals(Status.DISABLE)) {
+			return new ResponseEntity<String>("From/To Account Number is disabled, please contact our staff", HttpStatus.NOT_FOUND);
+		}
 		if (fromAcc.getAccountBalance() < transaction.getAmount()) {
 			return new ResponseEntity<String>(
 					"Transfer amount is more than the amount present in " + fromAcc.getAccountNumber(),
 					HttpStatus.INSUFFICIENT_SPACE_ON_RESOURCE);
 		}
+		
 		fromAcc.setAccountBalance(fromAcc.getAccountBalance() - transaction.getAmount());
 		toAcc.setAccountBalance(toAcc.getAccountBalance() + transaction.getAmount());
 
 		//accountService.updateAccount(fromAcc);
 		//accountService.updateAccount(toAcc);
-
+		transaction.setPaymentType(PaymentType.DEBIT);
 		Transaction trans = transactionService.addTransaction(transaction);
+		
+		Transaction t1 = new Transaction(transaction.getReference(),transaction.getAmount(), transaction.getToAcc(), transaction.getFromAcc() , transaction.getReason(), PaymentType.CREDIT);
+		Transaction t2 = transactionService.addTransaction(t1);
 		fromAcc.addtransaction(transaction);
-		toAcc.addtransaction(transaction);
+		toAcc.addtransaction(t2);
+		
+		System.out.println("Fine till here");
 		
 		accountService.updateAccount(fromAcc);
 		accountService.updateAccount(toAcc);
@@ -472,7 +492,7 @@ public class CustomerController {
 //            throw new RuntimeException("Invalid Login Credentials");
 
 		}
-		return new ResponseEntity("WRONG CREDENTIALS", HttpStatus.BAD_REQUEST);
+		return new ResponseEntity(new ErrorMapper("WRONG CREDENTIALS"), HttpStatus.BAD_REQUEST);
 	}
 	
 	@GetMapping("/getuserID")
@@ -508,6 +528,44 @@ public class CustomerController {
 				: new ResponseEntity(customer1, HttpStatus.OK);	        
 		}
 	
+	@GetMapping("/account/{accountNo}")
+	public ResponseEntity getAccountDetails(@PathVariable("accountNo") int accNo) {
+		Account account;
+		try {
+			System.out.println(accNo);
+			account = accountService.getAccountById(accNo);
+			System.out.println(account);
+		} catch (Exception nse) {
+			account = null;
+			nse.printStackTrace();
+		}
+		return account == null ? new ResponseEntity(new ErrorMapper("Account not found"), HttpStatus.OK)
+				: new ResponseEntity(account, HttpStatus.OK);
+
+	}
+	
+	@GetMapping("/{accountNumber}/transaction2")
+	public ResponseEntity<List<Transaction>> getTransactionByAccount(
+			@PathVariable(name = "accountNumber") int accountNumber) {
+		List<Transaction> transaction = transactionService.getAllTransaction();
+		List<Transaction> finalTransaction = new ArrayList<Transaction>();
+		try {
+			//Customer customer = customerService.getCustomerById(accountNumber);
+			Account account = accountService.getAccountById(accountNumber);
+			// List<Account> account = customer.getAccount();
+			// for(Account acc:account) {
+				for(Transaction trans:transaction) {
+					if((account.getAccountNumber()==trans.getFromAcc() && trans.getPaymentType().equals(PaymentType.DEBIT))|| (account.getAccountNumber()==trans.getToAcc()&& trans.getPaymentType().equals(PaymentType.CREDIT))){
+						finalTransaction.add(trans);
+					}
+				}
+			
+			//}
+			return new ResponseEntity<List<Transaction>>(finalTransaction, HttpStatus.OK);
+		} catch (NoSuchElementException e) {
+			return new ResponseEntity<List<Transaction>>(new ArrayList<Transaction>(), HttpStatus.OK);
+		}
+	}
 	
 	
 }
