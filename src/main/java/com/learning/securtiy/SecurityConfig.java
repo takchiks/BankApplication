@@ -2,9 +2,13 @@ package com.learning.securtiy;
 
 import com.learning.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -13,9 +17,16 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.util.ClassUtils;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Driver;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 
 @Configuration
@@ -24,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 		  securedEnabled = true, 
 		  jsr250Enabled = true)
 @EnableWebSecurity
+@EnableWebMvc
 
 
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -34,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JWTFilter filter;
     @Autowired
     private MyUserDetailsService uds;
+   
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -41,7 +54,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/customer/authenticate","/api/customer/getuser","/api/customer/register","/api/admin/login","/api/staff/authenticate","/api/staff/getuser","/api/admin/authenticate").permitAll()
-           
                 .anyRequest()
                 .authenticated()
                 .and()

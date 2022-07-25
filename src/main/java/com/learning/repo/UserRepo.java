@@ -9,7 +9,7 @@ import com.learning.entity.User;
 import java.util.Optional;
 
 @Repository
-@EnableJpaRepositories
+//@EnableJpaRepositories
 public interface UserRepo extends JpaRepository<User, Integer> {
     public Optional<User> findByUserName(String username);
 

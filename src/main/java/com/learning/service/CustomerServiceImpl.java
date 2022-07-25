@@ -40,10 +40,10 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public Customer updateCustomer(Customer customer) {
-		String encodedPassword = bCryptPasswordEncoder.encode(customer.getPassWord());
-		String encodedAnswer = bCryptPasswordEncoder.encode(customer.getSecret_answer());
-		customer.setPassWord(encodedPassword);
-		customer.setSecret_answer(encodedAnswer);
+//		String encodedPassword = bCryptPasswordEncoder.encode(customer.getPassWord());
+//		String encodedAnswer = bCryptPasswordEncoder.encode(customer.getSecret_answer());
+//		customer.setPassWord(encodedPassword);
+//		customer.setSecret_answer(encodedAnswer);
 		return customerRepo.save(customer);
 	}
 
