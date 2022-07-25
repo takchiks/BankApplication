@@ -12,6 +12,7 @@ import com.learning.enums.RoleType;
 
 import com.learning.enums.Status;
 import com.learning.others.UsernamePassword;
+import com.learning.pojo.CustomerRequestUpdate;
 import com.learning.pojo.ErrorMapper;
 
 import com.learning.repo.UserRepo;
@@ -200,9 +201,9 @@ public class CustomerController {
 	@GetMapping("/{customerID}/account")
 	public ResponseEntity<List<Account>> getAllAccounts(@PathVariable(name = "customerID") int customerID) {
 		
-			Customer cust = customerService.getCustomerById(customerID);System.out.println(cust);
+			Customer cust = customerService.getCustomerById(customerID);
 			System.out.println("I was here");
-			if(cust.getAccount() == null) {
+			if(cust.getAccount() != null) {
 				System.out.println(cust.getAccount());
 				return new ResponseEntity<List<Account>>(cust.getAccount(), HttpStatus.valueOf(200));
 			}
@@ -232,20 +233,23 @@ public class CustomerController {
 
 	@PutMapping("/{customerID}")
 	public ResponseEntity<Customer> updateCustomer(@PathVariable(name = "customerID") int customerID,
-			@RequestBody Customer cust) {
+			@RequestBody CustomerRequestUpdate cust) {
 		Customer customer;
+		System.out.print(cust);
 		try {
 			customer = customerService.getCustomerById(customerID);
 			customer.setFullName(cust.getFullName());
-			customer.setUserName(cust.getUserName());
-			customer.setPassWord(cust.getPassWord());
+			customer.setStatus(cust.getStatus());
+			customer.setSecret_question(cust.getSecret_question());
+			if(cust.getSecret_answer()!=customer.getSecret_answer())
+				customer.setSecret_answer(bCryptPasswordEncoder.encode(cust.getSecret_answer()));
 			customer.setPhoneNumber(cust.getPhoneNumber());
+
 			customerService.updateCustomer(customer);}
 			//return new ResponseEntity<Customer>(customerService.updateCustomer(customer), HttpStatus.valueOf(200));}
 		catch(NoSuchElementException e) {
 			//return new ResponseEntity<Customer>(new Customer(), HttpStatus.NOT_FOUND);
 			customer=null;
-			customerService.updateCustomer(customer);
 		}
 		// return new ResponseEntity<Customer>(customerService.updateCustomer(customer),
 		// HttpStatus.valueOf(200));}
@@ -379,8 +383,8 @@ public class CustomerController {
 	}}
 
 	@PreAuthorize("hasAuthority('CUSTOMER')")
-	@DeleteMapping("/{customerID}/beneficary/{beneficaryID}")
-	public ResponseEntity<String> deleteBeneficary(@PathVariable(name = "customerID") int customerID,
+	@DeleteMapping("/{customerID}/beneficiary/{beneficaryID}")
+	public ResponseEntity deleteBeneficary(@PathVariable(name = "customerID") int customerID,
 			@PathVariable(name = "beneficaryID") int beneficaryID) {
 		Customer customer = customerService.getCustomerById(customerID);
 		List<Account> account = customer.getAccount();
@@ -391,7 +395,7 @@ public class CustomerController {
 				acc.remove(ben1);
 				beneficiaryService.deleteBeneficiary(beneficaryID);
 				temp = 1;
-				return new ResponseEntity<String>("Beneficiary Deleted", HttpStatus.OK);
+				return new ResponseEntity(ben1, HttpStatus.OK);
 			}
 		}
 		if (temp == 0) {
@@ -401,7 +405,7 @@ public class CustomerController {
 	}
 
 	@PutMapping("/transfer")
-	public ResponseEntity<String> transferAmount(@RequestBody Transaction transaction) {
+	public ResponseEntity transferAmount(@RequestBody Transaction transaction) {
 		transaction.setDate(new Date());
 		transaction.setReference("No references required");
 		System.out.println("I got hit");
@@ -449,7 +453,7 @@ public class CustomerController {
 		accountService.updateAccount(fromAcc);
 		accountService.updateAccount(toAcc);
 
-		return new ResponseEntity<String>("Amount is transfered ", HttpStatus.valueOf(200));
+		return new ResponseEntity(transaction, HttpStatus.valueOf(200));
 	}
 
 	//@PreAuthorize("hasAuthority('CUSTOMER')")
@@ -509,7 +513,7 @@ public class CustomerController {
 				//List<Customer> customer = customerService.getAllCustomer();
 				for(Customer custom:customer) {
 					if(username.equals(custom.getUserName())){
-						custom.setPassWord(body.getPassword());
+						custom.setPassWord(bCryptPasswordEncoder.encode(body.getPassword()));
 						customerService.updateCustomer(custom);
 						customer1=custom;
 					}
