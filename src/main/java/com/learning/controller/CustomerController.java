@@ -204,9 +204,9 @@ public class CustomerController {
 			Customer cust = customerService.getCustomerById(customerID);
 			System.out.println("I was here");
 			if(cust.getAccount() != null) {
+				System.out.println(cust.getAccount() == null);
 				System.out.println(cust.getAccount());
-				return new ResponseEntity<List<Account>>(cust.getAccount(), HttpStatus.valueOf(200));
-			}
+				return new ResponseEntity<List<Account>>(cust.getAccount(), HttpStatus.valueOf(200));}
 			else {
 				System.out.println("In else block");
 			return new ResponseEntity(new ErrorMapper("There are no accounts created for you!!"), HttpStatus.BAD_REQUEST);}
@@ -423,15 +423,15 @@ public class CustomerController {
 			}
 		}
 		if (fromAcc == null || toAcc == null) {
-			return new ResponseEntity<String>("From/To Account Number isn't valid", HttpStatus.NOT_FOUND);
+			return new ResponseEntity(new ErrorMapper("From/To Account Number isn't valid"), HttpStatus.NOT_FOUND);
 		}
 		
 		if(fromAcc.getStatus().equals(Status.DISABLE)|| toAcc.getStatus().equals(Status.DISABLE)) {
-			return new ResponseEntity<String>("From/To Account Number is disabled, please contact our staff", HttpStatus.NOT_FOUND);
+			return new ResponseEntity(new ErrorMapper("From/To Account Number is disabled, please contact our staff"), HttpStatus.NOT_FOUND);
 		}
 		if (fromAcc.getAccountBalance() < transaction.getAmount()) {
-			return new ResponseEntity<String>(
-					"Transfer amount is more than the amount present in " + fromAcc.getAccountNumber(),
+			return new ResponseEntity(new ErrorMapper(
+					"Transfer amount is more than the amount present in " + fromAcc.getAccountNumber()),
 					HttpStatus.INSUFFICIENT_SPACE_ON_RESOURCE);
 		}
 		
