@@ -139,7 +139,7 @@ public class StaffController {
 			}
 			System.out.println("approving beneficary");
 //            beneficary = beneficiaryService.findByAccountNumber(beneficaryRequest.getBeneficiaryAcNo());
-			beneficary.setApproved(beneficaryRequest.getApproved());
+			beneficary.setIsApproved(beneficaryRequest.getApproved());
 			beneficary.setDate(beneficaryRequest.getBeneficiaryAddedDate());
 
 			beneficary = beneficiaryService.updateBeneficary(beneficary);

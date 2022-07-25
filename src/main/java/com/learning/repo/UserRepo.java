@@ -9,7 +9,7 @@ import com.learning.entity.User;
 import java.util.Optional;
 
 @Repository
-@EnableJpaRepositories
+//@EnableJpaRepositories
 public interface UserRepo extends JpaRepository<User, Integer> {
 	public User findByUserNameAndPassWord(String username, String password);
 	//public User findByUserName(String username);

@@ -2,6 +2,7 @@ package com.learning.entity;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -25,6 +26,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int userId;
 	private String fullName;
+	@Column(unique=true)
 	private String userName;
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String passWord;
@@ -41,6 +43,15 @@ public class User {
 	}
 	
 	
+	public User(String fullName, String userName, String passWord, RoleType role) {
+		super();
+		this.fullName = fullName;
+		this.userName = userName;
+		this.passWord = passWord;
+		this.role = role;
+	}
+
+
 	public User(int userId, String fullName, String userName, String passWord, RoleType role) {
 		super();
 		this.userId = userId;
@@ -109,6 +120,12 @@ public class User {
 
 	public void setRole(RoleType role) {
 		this.role = role;
+	}
+
+
+	public boolean getIsActive() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 	
 	

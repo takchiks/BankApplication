@@ -17,22 +17,22 @@ public class JWTUtil {
     @Value("${jwt_secret}")
     private String secret;
 
-    public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
+    public String generateToken(String username) throws IllegalArgumentException, JWTCreationException {
         return JWT.create()
                 .withSubject("User Details")
-                .withClaim("email", email)
+                .withClaim("username", username)
                 .withIssuedAt(new Date())
-                .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
+                .withIssuer("BankApp")
                 .sign(Algorithm.HMAC256(secret));
     }
 
     public String validateTokenAndRetrieveSubject(String token)throws JWTVerificationException {
         JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret))
                 .withSubject("User Details")
-                .withIssuer("YOUR APPLICATION/PROJECT/COMPANY NAME")
+                .withIssuer("BankApp")
                 .build();
         DecodedJWT jwt = verifier.verify(token);
-        return jwt.getClaim("email").asString();
+        return jwt.getClaim("username").asString();
     }
 
 }

@@ -99,10 +99,9 @@ public class CustomerController {
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
+
 			System.out.println("WRONG PASSWORD OR USERNAME");
 			authExc.printStackTrace();
-			//return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
-
 			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
@@ -196,24 +195,21 @@ public class CustomerController {
 				: new ResponseEntity(acc, HttpStatus.OK);
 	}
 
-	/*
-	 * 
-	 * @PreAuthorize("hasAuthority('STAFF')")
-	 * 
-	 * @PutMapping("/{customerID}/account/{accountID}") public Account
-	 * approveAccount(@MatrixVariable (pathVar = "customerID") int
-	 * customerID, @MatrixVariable (pathVar = "accountID") int accountID) { Customer
-	 * cust = customerService.getCustomerById(customerID); List<Account> account =
-	 * cust.getAccount(); for(Account acc:account) {
-	 * if(acc.getAccountNumber()==accountID) { acc.setApproved("Yes"); return acc; }
-	 * } return null; }
-	 */
+	
 
 	@GetMapping("/{customerID}/account")
 	public ResponseEntity<List<Account>> getAllAccounts(@PathVariable(name = "customerID") int customerID) {
-		Customer cust = customerService.getCustomerById(customerID);
-		System.out.println(cust);
-		return new ResponseEntity<List<Account>>(cust.getAccount(), HttpStatus.valueOf(200));
+		
+			Customer cust = customerService.getCustomerById(customerID);System.out.println(cust);
+			System.out.println("I was here");
+			if(cust.getAccount() == null) {
+				System.out.println(cust.getAccount());
+				return new ResponseEntity<List<Account>>(cust.getAccount(), HttpStatus.valueOf(200));
+			}
+			else {
+				System.out.println("In else block");
+			return new ResponseEntity(new ErrorMapper("There are no accounts created for you!!"), HttpStatus.BAD_REQUEST);}
+		
 
 	}
 
@@ -365,11 +361,10 @@ public class CustomerController {
 		try {
 			Account account = accountService.getAccountById(ben.getAccountNumber());
 			Customer customer = customerService.getCustomerById(customerID);
+
 			ben.setDate(new Date());
-			ben.setApproved("false");
-
-			ben = new Beneficary(ben.getAccountNumber(), ben.getAccountType(),ben.isApproved() );
-
+			ben.setIsApproved("false");
+			ben = new Beneficary(ben.getAccountNumber(), ben.getAccountType(),ben.getIsApproved() );
 			account.addbeneficiary(ben);
 			System.out.println(ben);
 			account = accountService.updateAccount(account);
@@ -465,12 +460,14 @@ public class CustomerController {
 		System.out.println(username + question +answer);
 		for (Customer custom : customer) {
 			System.out.println(custom.getUserName() + custom.getSecret_question() +custom.getSecret_answer());
-			if ((custom.getUserName().equals(username)) &&
-					custom.getSecret_question().equals(question) ) {
+			if ((custom.getUserName().equals(username)) && custom.getSecret_question().equals(question) 
+					&& bCryptPasswordEncoder.matches(answer, custom.getSecret_answer())) {
+				System.out.println("Found");
 					//&& bCryptPasswordEncoder.matches(answer, custom.getSecret_answer())) {
 				return new ResponseEntity<String>("Details Validated", HttpStatus.valueOf(200));
 			}
 		}
+		//return new ResponseEntity(new ErrorMapper("Sorry, your username, security question and answer mismatched. Try again"), HttpStatus.valueOf(200));
 		return new ResponseEntity<String>("Sorry your secret details are not matching", HttpStatus.valueOf(200));
 	}
 

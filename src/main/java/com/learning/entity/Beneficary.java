@@ -56,11 +56,11 @@ public class Beneficary {
 		this.accountType = accountType;
 	}
 
-	public String isApproved() {
+	public String getIsApproved() {
 		return isApproved;
 	}
 
-	public void setApproved(String isApproved) {
+	public void setIsApproved(String isApproved) {
 		this.isApproved = isApproved;
 	}
 
