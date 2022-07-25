@@ -89,12 +89,8 @@ public class CustomerController {
 
 			return new ResponseEntity<>(Collections.singletonMap("jwt", token), HttpStatus.ACCEPTED);
 		} catch (AuthenticationException authExc) {
-<<<<<<< HEAD
 			authExc.printStackTrace();
-			return new ResponseEntity("WRONG USERNAME OR PASSWORD", HttpStatus.BAD_REQUEST);
-=======
 			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
->>>>>>> branch 'master' of https://github.com/takchiks/BankApplication
 		}
 //        return new ResponseEntity(HttpStatus.OK);/
 	}
