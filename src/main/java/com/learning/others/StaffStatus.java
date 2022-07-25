@@ -31,6 +31,10 @@ public class StaffStatus {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+	@Override
+	public String toString() {
+		return "StaffStatus [staffId=" + staffId + ", status=" + status + "]";
+	}
 	
 	
 	

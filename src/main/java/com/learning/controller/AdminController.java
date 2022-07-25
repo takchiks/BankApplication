@@ -147,7 +147,7 @@ public class AdminController {
 	public ResponseEntity<User> setStaffStatus(@RequestBody Staff staffStatus) {
 		int staffId = staffStatus.getUserId();
 		Status status = staffStatus.getStatus();
-
+		System.out.println(staffStatus);
 		if ((status == Status.DISABLE) || (status == Status.ENABLE)) {
 			adminService.setStaffStatus(staffId, status);
 			return new ResponseEntity<User>(staffStatus, HttpStatus.OK);

@@ -105,9 +105,8 @@ public class CustomerController {
 			authExc.printStackTrace();
 			return new ResponseEntity(new ErrorMapper("WRONG USERNAME OR PASSWORD"), HttpStatus.BAD_REQUEST);
 		}
-//        return new ResponseEntity(HttpStatus.OK);/
 	}
-
+			
 	@PostMapping("/register")
 	public ResponseEntity<Customer> registerCustomer(@RequestBody Customer customer) {
 
